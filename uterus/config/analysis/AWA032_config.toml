@@ -1,11 +1,11 @@
-run_nb=3  # Experimental run number
-start_time=20  # Time at which to start the analysis
-end_time=170   # Time at which to end the analysis
-win_size=30  # Size of the observation window of an event in seconds
+run_nb=2  # Experimental run number
+start_time=290  # Time at which to start the analysis
+end_time=590  # Time at which to end the analysis
+win_size=20  # Size of the observation window of an event in seconds
 win_split=0.25  # Percentage of the window before the event timestamp
 lowpass_cutoff_freq=1  # Hz
 highpass_cutoff_freq=1  # Hz
-min_nb_chns=5  # Minimum number of channels needed to analyse event
+min_nb_chns=15  # Minimum number of channels needed to analyse event
 time_res=1  # Temporal resolution for spectrographic analysis
 env_tolerance=0.12  # Percentage of the signal length to be used for calculating the RMS envelope
 conn_tolerance=0.05  # Percentage of the signal length to be used for calculating the event connections
