@@ -1,0 +1,5 @@
+run_nb=2
+half_win_size=60 # Half size of the observation window of an event in pts
+lowpass_cutoff_freq=1 # Hz
+highpass_cutoff_freq=1 # Hz
+min_nb_chns=15 # Minimum number of channels needed to analyse event
