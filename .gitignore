@@ -1,12 +1,10 @@
 # Ignore data folders
-uterus/data/
-fHR/data/
+data/
 
 # Ignore README backups
 *.backup
 
 # Ignore asv files
-uterus/code/analysis/*.asv
-uterus/code/plots/*.asv
-uterus/code/utils/*.asv
-fHR/code/*.asv
+code/analysis/*.asv
+code/plots/*.asv
+code/utils/*.asv
