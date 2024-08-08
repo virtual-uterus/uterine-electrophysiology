@@ -1,5 +1,5 @@
 %% Set paths and load parameters
-dir_path = "electrophys/uterus/data";
+dir_path = "electrophys/data";
 estrus_config = "estrus_config.toml";
 
 load_directory = join([baseDir(), dir_path], '/');
