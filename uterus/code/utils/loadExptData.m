@@ -1,36 +1,38 @@
-function [data, tvec, Fs, electrode_cnfg, vargout] = loadExptData( ...
-    mat_file, x_sec)
+function [data, tvec, Fs, electrode_cnfg, marks, electrode_dist] = ...
+    loadExptData(mat_file, start_time, end_time)
 %LOADEXPTDATA Loads the experimental data from the mat file.
 %
-% x_sec from the start and end of the signals are removed.
+% The signals are cropped to start at start_time and end at end_time. The
+% signals will be end_time - start_time seconds long. The time vector tvec
+% is also cropped to fit the signal length.
 %
 %   Input:
 %    - mat_file, path to the mat file containing the data.
-%    - x_sec, number of seconds to remove from beginning and end of signal,
-%   default value 5.
+%    - start_time, analysis start time (in s).
+%    - end_time, analysis end time (in s).
 %
 %   Return:
 %    - data, data read from the mat file, data(NB_SAMPLES x CHANNELS).
 %    - tvec, time vector of the experiment.
 %    - Fs, sampling frequency.
 %    - electrode_cnfg, electrode configuration.
-%    - vargout, marks cell (if exists).
-if nargin < 2
-    x_sec = 5;
-end
-
+%    - marks, marks cell (if exists).
+%    - electrode_dist, distance between electrodes (in mm). 
 load(mat_file, 'toapp');
 
 data = toapp.filtdata'; % Load data and flip to match NB_SAMPLES x CHANNELS
 tvec = toapp.tvec;
 Fs = toapp.fs;
 electrode_cnfg = toapp.orientedElec;
+electrode_dist = toapp.elecSpacing;
+
+marks = {};
 
 if isfield(toapp, 'TimeAmplCluster')
     % Check if data has marks
-    vargout = toapp.TimeAmplCluster;
+    marks = toapp.TimeAmplCluster;
 end
 
-data = data(x_sec*Fs:end-x_sec*Fs, :); % Remove x_sec before and after
-tvec = tvec(x_sec*Fs:end-x_sec*Fs);
+data = data(start_time*Fs:end_time*Fs, :); % Crop signal to correct time
+tvec = tvec(start_time*Fs:end_time*Fs);
 end

@@ -1,14 +1,16 @@
-function markedDataAnalysis(dir_path, base_name)
+function AS = markedDataAnalysis(dir_path, base_name)
 %MARKEDDATAANALYSIS Performs the frequency analysis on the input data on
-%marked data exported from UGEMS. 
+%marked data exported from UGEMS.
 %
 %   base_dir is $HOME/Documents/phd/ and set in utils/baseDir()
 %
 %   Input:
 %    - dir_path, path to the directory containing the dataset from base_dir
 %    - base_name, name of the dataset.
-%   
-%   Return: 
+%
+%   Return:
+%    - AS, analysis structure containing the analysis metrics, see
+%    createAnalysisStruct.m for more details.
 %% Load data and parameters
 load_directory = join([baseDir(), dir_path, base_name, 'mat'], '/');
 config_file_path = join([load_directory, base_name + '_config.toml'], '/');
@@ -23,15 +25,22 @@ mat_file_name = join([base_name, "run", num2str(params.run_nb), ...
 mat_file_path = join([load_directory, mat_file_name], '/');
 
 % Load data
-[data, tvec, Fs, ~, marks] = loadExptData(mat_file_path);
+[data, tvec, Fs, electrode_cnfg, marks, electrode_dist] = loadExptData(...
+    mat_file_path, params.start_time, params.end_time);
 
 close all; % Close the UGEMS window
 
-win_size = double(params.half_win_size .* Fs);
+win_size = double(params.win_size .* Fs);
 nb_points = length(tvec); % Number of sampling points
 
 %% Determine the event occurence rate
 nb_marks = length(marks);
+
+if nb_marks == 0
+    % Safety check for marks
+    error("The data does not contain any marks and cannot be processed");
+end
+
 [~, event_idx] = find(cellfun('length', marks) > params.min_nb_chns);
 
 % Remove unlabeled marks if the have been extracted in the index list
@@ -40,21 +49,68 @@ if event_idx(end) == nb_marks
 end
 
 nb_events = length(event_idx);
-EOR = nb_events ./ (tvec(end) - tvec(1)); % Event occurence rate
-disp(['Event occurence rate is ', num2str(EOR),  ' Hz']);
+valid_events = 0; % Count the number of events in desired times
+
+% Create analysis structure
+AS = createAnalysisStruct(nb_events);
+
+AS.name = base_name;
 
 %% Frequency analysis on events
-for k = event_idx
-    disp(['Processing event number ', num2str(k)])
-    event_data = marks{k}(:, 3:4); % Get timestamp and chn
+for j = 1:nb_events
+    k = event_idx(j);
+
+    event_data = removeDuplicatePoints( ...
+        marks{k}(:, 3:4)); % Timestamps and chns of the event
+
+    if max(event_data(:, 1)) < params.start_time || ...
+            max(event_data(:, 1)) > params.end_time
+        % Skip events that are not within selected times
+        continue
+    else
+        event_data(:, 1) = event_data(:, 1) - double(params.start_time);
+        valid_events = valid_events + 1;
+    end
+
+    disp(['    Processing event number ', num2str(k)])
 
     if length(event_data) > params.min_nb_chns
-        start_times = round(event_data(:, 1) .* Fs) - win_size;
-        end_times = round(event_data(:, 1) .* Fs) + win_size;
+
+        % If using channels 65 to 128 remove 64
+        if all(event_data(:, 2) > 64)
+            event_data(:, 2) = event_data(:, 2) - 64;
+        end
+
+        % Estimate propagation properties
+        [prop_dist, prop_vel, prop_direction] = propagationAnalysis( ...
+            arrangeTimes(event_data, electrode_cnfg), ...
+            electrode_dist);
+
+        AS.prop_vel(1, j) = mean(prop_vel, 'all', 'omitnan');
+        AS.prop_dist(1, j) = prop_dist;
+        AS.prop_direction(1, j) = prop_direction;
+
+        if j > 1
+            past_event_data = removeDuplicatePoints( ...
+                marks{event_idx(j-1)}(:, 3:4)); % Timestamps and chns
+            % If using channels 65 to 128 remove 64
+            if all(past_event_data(:, 2) > 64)
+                past_event_data(:, 2) = past_event_data(:, 2) - 64;
+            end
+            [AS.event_interval(1, j-1), AS.event_interval(2, j-1), ...
+                AS.event_interval(3, j-1)] = eventIntervalAnalysis( ...
+                past_event_data, event_data);
+        end
+
+        start_times = round(event_data(:, 1) .* Fs - ...
+            win_size * params.win_split);
+        end_times = round(event_data(:, 1) .* Fs + ...
+            win_size * (1 - params.win_split));
 
         % Ensure start and end times are valid
         start_times(start_times <= 0) = 1; % Reset to 1 if negative or 0
         end_times(end_times > nb_points) = nb_points; % Reset to be end time
+
 
         events = data(start_times:end_times, event_data(:, 2));
         [fwave, swave] = separateWaves(events, ...
@@ -62,20 +118,43 @@ for k = event_idx
             params.lowpass_cutoff_freq, ...
             Fs);
 
-        % Perform analyse on slow-wave and fast-wave components
-        [sw_mean, sw_std] = frequencyAnalysis(swave, Fs);
-        [fw_mean_bw, fw_std_bw, ~, ~, ~, ~] = frequencyAnalysis(fwave, ...
-            Fs, 'power');
+        % Perform analysis on slow-wave
+%         [AS.sw_frequency(1, j), AS.sw_frequency(2, j)] = ...
+%             frequencyAnalysis(swave, Fs);
 
-        % Display results
-        disp(['    Slow-wave max frequency: ', ...
-            num2str(sw_mean), ' ± ', num2str(sw_std), ' Hz'])
-        disp(['    Fast-wave 95% power frequency band: ', ...
-            num2str(fw_mean_bw), ' ± ', num2str(fw_std_bw), ' Hz'])
+        [sw_duration, fw_duration, fw_delay] = temporalAnalysis(...
+            swave, fwave, Fs, params.conn_tolerance, params.env_tolerance);
+
+        % Populate AS with temporal metrics
+        AS.sw_duration(1, j) = mean(sw_duration, 'omitnan');
+        AS.sw_duration(2, j) = std(sw_duration, 'omitnan');
+
+        AS.fw_duration(1, j) = mean(fw_duration, 'omitnan');
+        AS.fw_duration(2, j) = std(fw_duration, 'omitnan');
+
+        AS.fw_delay(1, j) = mean(fw_delay, 'omitnan');
+        AS.fw_delay(2, j) = std(fw_delay, 'omitnan');
+
+        AS.fw_percentage(j) = 100 * ( ...
+            sum(~isnan(fw_duration)) ./ numel(fw_duration));
+
+        % Perform analysis on fast-wave
+%         [AS.fw_frequency(1, j), AS.fw_frequency(2, j)] = ...
+%             frequencyAnalysis(fwave, Fs);
+%         [AS.fw_bandwidth(1, j), AS.fw_bandwidth(2, j), ...
+%             AS.fw_flow(1, j), AS.fw_flow(2, j), ...
+%             AS.fw_fhigh(1, j), AS.fw_fhigh(2, j)] = ...
+%             frequencyAnalysis(fwave, Fs, 'power');
+
+        AS.nb_samples(j) = length(event_data); % Add the number of chns
+
     else
         % Skip if not enough points
         disp(['    Only ', num2str(length(event_data)), ...
             ' events: skipping analysis'])
     end
 end
+
+% Event occurence rate in events/min
+AS.EOR = 60 * 1 / mean(AS.event_interval(1, :)); 
 end
