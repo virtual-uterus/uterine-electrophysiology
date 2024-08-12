@@ -13,16 +13,16 @@ function color = getPhaseColor(phase)
 %    - color, plot color associated with the phase.
 switch phase
     case "proestrus"
-        color = "b";
+        color = [0 0.4470 0.7410];
 
     case "estrus"
-        color = "k";
+        color = [0.4660 0.6740 0.1880];
 
     case "metestrus"
-        color = "r";
+        color = [0.6350 0.0780 0.1840];
 
     case "diestrus"
-        color = "g";
+        color = [0.4940 0.1840 0.5560];
 
     otherwise
         error("Error: selected phase is not valid.")

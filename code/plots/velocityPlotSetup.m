@@ -29,7 +29,7 @@ swarmchart(ones(1, size(plotted_data, 2))*x_centre, ...
 hold on;
 
 % Plot box plot
-boxplot(plotted_data(1, :), 'Positions', x_centre);
+boxplot(plotted_data(1, :), 'Positions', x_centre, 'Colors', color);
 
 ylabel("Propagation velocity (mm/s)")
 end
