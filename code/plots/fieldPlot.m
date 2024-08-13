@@ -38,8 +38,10 @@ for j = 1:size(selected_phase, 2)
     xtick_marks(j) = j + ...
         ((size(analysis_structs.(cur_phase), 2) - 1) * offset) / 2;
     switch field
-        case "duration"
-            durationPlotSetup(analysis_structs, cur_phase, offset);
+        case "sw_duration"
+            durationPlotSetup(analysis_structs, cur_phase, offset, "sw");
+        case "fw_duration"
+            durationPlotSetup(analysis_structs, cur_phase, offset, "fw");
         case "eor"
             eorPlotSetup(analysis_structs, cur_phase, offset);
         case "velocity"

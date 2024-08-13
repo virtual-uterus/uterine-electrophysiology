@@ -1,4 +1,4 @@
-function durationPlotSetup(analysis_structs, phase, offset)
+function durationPlotSetup(analysis_structs, phase, offset, wave)
 %DURATIONPLOTSETUP Setups the plot for the duration of the slow and fast
 %waves. Fast-wave is red and slow-wave is blue.
 %
@@ -8,32 +8,41 @@ function durationPlotSetup(analysis_structs, phase, offset)
 %    - phase, {'proestrus', 'estrus', 'metestrus', 'diestrus', 'all'},
 %    phase of the cycle to plot or plot all if 'all' is selected.
 %    - offset, offset value for experiments in the same estrus phase.
+%    - wave, {'sw', 'fw'}, type of wave to look at.
 %
 %   Return:
 phases = estrusPhases();
 nb_expts = size(analysis_structs.(phase), 2);
 j = find(lower(phases) == phase);  % Index of the phase
-tiny_bit = 0.08;
+color = getPhaseColor(phase);
+% plotted_data = zeros(1, nb_expts); 
+plotted_data = [];
+x_centre = j + ((nb_expts - 1) * offset) / 2;
+
+if strcmp(wave, "sw")
+    field = "sw_duration";
+
+elseif strcmp(wave, "fw")
+    field = "fw_duration";
+
+else
+    error("Error: Incorrect wave type");
+end
 
 for k = 1:nb_expts
     AS = analysis_structs.(phase)(k); % Analysis structure
-    analysed_event_idx = AS.("nb_samples") > 0; % Marked events indices
-
-    % Slow-wave duration    
-    boxplot(AS.("sw_duration")(1, analysed_event_idx), ...
-        'Positions', j+(k-1)*offset, ...
-        'Colors', 'b', 'Widths', 0.05, 'BoxStyle', 'filled', ...
-        'Symbol', '+b', 'MedianStyle', 'target'); 
-    hold on;
-
-    % Fast-wave duration
-    boxplot(AS.("fw_duration")(1, analysed_event_idx), ...
-        'Positions', j+tiny_bit+(k-1)*offset, ...
-        'Colors', 'r', 'Widths', 0.05, 'BoxStyle', 'filled', ...
-        'Symbol', '+r', 'MedianStyle', 'target'); 
-
+    % plotted_data(k) = mean(...
+    %     AS.(field)(1, (AS.(field)(1, :) > 0)));
+    plotted_data = [plotted_data, AS.(field)(1, (AS.(field)(1, :) > 0))];
 end
 
+% Plot data points
+swarmchart(ones(1, size(plotted_data, 2))*x_centre, ...
+    plotted_data(1, :), 10, color, 'filled', 'XJitterWidth',  0.1);
+hold on;
+
+% Plot box plot
+boxplot(plotted_data(1, :), 'Positions', x_centre, 'Colors', color);
 ylabel("Event durations (s)")
-title("Slow-wave: blue, Fast-wave: red")
+
 end
