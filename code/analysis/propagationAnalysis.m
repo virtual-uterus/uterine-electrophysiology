@@ -1,7 +1,7 @@
 function [prop_dist, prop_vel, prop_direction] = propagationAnalysis( ...
     arranged_times, electrode_dist)
 %PROPAGATIONANALYSIS Computes the propagation metrics based on the arranged
-%timestamps of the event and the inter-electrode distance. 
+%timestamps of the event and the inter-electrode distance.
 %
 %   Inputs:
 %    - arranged_times, timestamps of the event arranged according to the
@@ -20,15 +20,15 @@ mean_time = mean(arranged_times, 2, 'omitnan');
 
 %% Estimate propagation direction based on the trend of the mean tiems
 propagation_trend = trenddecomp(mean_time, 'ssa', 4);
-[~, cnt] = zerocrossrate(diff(propagation_trend), 'Method', 'comparison');
+% [~, cnt] = zerocrossrate(diff(propagation_trend), 'Method', 'comparison');
 
-if cnt >= 2
+[~, min_ind] = min(propagation_trend);
+[~, max_ind] = max(propagation_trend);
+
+if abs(max_ind - min_ind) < 10
     prop_direction = 0; % Disorganised activity
 
 else
-    [~, min_ind] = min(propagation_trend);
-    [~, max_ind] = max(propagation_trend);
-
     if min_ind <= max_ind
         prop_direction = 1; % Ovaries to cervix
 
