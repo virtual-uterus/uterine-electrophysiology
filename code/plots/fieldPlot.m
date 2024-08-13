@@ -39,21 +39,31 @@ for j = 1:size(selected_phase, 2)
         ((size(analysis_structs.(cur_phase), 2) - 1) * offset) / 2;
     switch field
         case "sw_duration"
-            durationPlotSetup(analysis_structs, cur_phase, offset, "sw");
+            boxplotSetup(analysis_structs, cur_phase, offset, field);
+            ylabel("Slow-wave event durations (s)")
+            ylim([0, 35])
         case "fw_duration"
-            durationPlotSetup(analysis_structs, cur_phase, offset, "fw");
-        case "eor"
-            eorPlotSetup(analysis_structs, cur_phase, offset);
+            boxplotSetup(analysis_structs, cur_phase, offset, field);
+            ylabel("Bursting event durations (s)")
+            ylim([0, 35])
         case "velocity"
-            velocityPlotSetup(analysis_structs, cur_phase, offset);
-        case "frequency"
-            frequencyPlotSetup(analysis_structs, cur_phase, offset);
+            boxplotSetup(analysis_structs, cur_phase, offset, ...
+                "prop_vel");
+            ylabel("Propagation velocity (mm/s)")
         case "interval"
-            intervalPlotSetup(analysis_structs, cur_phase, offset);
+            boxplotSetup(analysis_structs, cur_phase, offset, ...
+                "event_interval");
+            ylabel("Event interval (s)")
         case "distance"
-            distancePlotSetup(analysis_structs, cur_phase, offset);
+            boxplotSetup(analysis_structs, cur_phase, offset, ...
+                "prop_dist");
+            ylabel("Propagation distance (mm)")
         case "direction"
             directionPlotSetup(analysis_structs, cur_phase, offset);
+        case "frequency"
+            frequencyPlotSetup(analysis_structs, cur_phase, offset);
+        case "eor"
+            eorPlotSetup(analysis_structs, cur_phase, offset);
         otherwise
             error("Error: selected field is not valid.")
     end
