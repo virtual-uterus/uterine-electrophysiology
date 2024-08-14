@@ -16,25 +16,32 @@ function [prop_dist, prop_vel, prop_direction] = propagationAnalysis( ...
 %    - prop_direction, propagation direction based on the trend of the mean
 %       timestamps, 1 ovaries -> cervix, -1 cervix -> ovaries, 0
 %       disorganised activity.
+[nb_rows, nb_cols] = size(arranged_times);
+prop_trends = zeros(nb_rows, nb_cols);
+prop_directions = ones(1, nb_cols); % Default direction ovaries to cervix
 mean_time = mean(arranged_times, 2, 'omitnan');
 
-%% Estimate propagation direction based on the trend of the mean tiems
-propagation_trend = trenddecomp(mean_time, 'ssa', 4);
-% [~, cnt] = zerocrossrate(diff(propagation_trend), 'Method', 'comparison');
+%% Estimate propagation direction based on the trend of the mean times
+for k = 1:nb_cols
+    prop_trends(:, k) = trenddecomp(arranged_times(:, k));
+end
 
-[~, min_ind] = min(propagation_trend);
-[~, max_ind] = max(propagation_trend);
+[~, min_ind] = min(prop_trends);
+[~, max_ind] = max(prop_trends);
 
-if abs(max_ind - min_ind) < 10
-    prop_direction = 0; % Disorganised activity
+prop_directions(abs(max_ind - min_ind) < round(...
+    0.8 * size(arranged_times, 1))) = 0; % Disorganised activity
+
+prop_directions(min_ind > max_ind) = -1; % Cervix to ovaries
+
+[grp_size, vals] = groupcounts(prop_directions');
+[max_val, max_idx] = max(grp_size); 
+
+if max_val < 3
+    prop_direction = 0; % Several directions = disorganised
 
 else
-    if min_ind <= max_ind
-        prop_direction = 1; % Ovaries to cervix
-
-    else
-        prop_direction = -1; % Cervix to ovaries
-    end
+    prop_direction = vals(max_idx); 
 end
 
 %% Estimate propagation distance based on the mean times
