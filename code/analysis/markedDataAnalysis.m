@@ -28,7 +28,7 @@ mat_file_path = join([load_directory, mat_file_name], '/');
 [data, tvec, Fs, electrode_cnfg, marks, electrode_dist] = loadExptData(...
     mat_file_path, params.start_time, params.end_time);
 
-close all; % Close the UGEMS window
+close all; % Close the UTEMS window
 
 win_size = double(params.win_size .* Fs);
 nb_points = length(tvec); % Number of sampling points
@@ -90,7 +90,7 @@ for j = 1:nb_events
         AS.prop_dist(1, j) = prop_dist;
         AS.prop_direction(1, j) = prop_direction;
 
-        if j > 1
+        if valid_events > 1
             past_event_data = removeDuplicatePoints( ...
                 marks{event_idx(j-1)}(:, 3:4)); % Timestamps and chns
             % If using channels 65 to 128 remove 64
