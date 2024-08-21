@@ -27,8 +27,8 @@ function analysis_struct = createAnalysisStruct(nb_events)
 %       fw_delay, delay between the start of the slow-wave and the start of
 %       the fast-wave in seconds, fw_delay(2 x NB_EVENTS),
 %           row 1: mean, row 2: std.
-%       fw_percentage, percentage of events with a fast-wave, 
-%           fw_percentage(1 x NB_EVENTS),
+%       fw_occurence, percentage of events with a fast-wave, 
+%           fw_occurence(1 x NB_EVENTS),
 %
 %   Unused metrics that are commented out:
 %       sw_frequency, slow-wave max frequency, sw_frequency(2 x NB_EVENTS),
@@ -68,5 +68,5 @@ analysis_struct.sw_duration = metric_arr;
 % analysis_struct.fw_flow = metric_arr;
 analysis_struct.fw_duration = metric_arr;
 analysis_struct.fw_delay = metric_arr;
-analysis_struct.fw_percentage = zeros(1, nb_events);
+analysis_struct.fw_occurence = zeros(1, nb_events);
 end

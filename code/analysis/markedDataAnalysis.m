@@ -135,7 +135,7 @@ for j = 1:nb_events
         AS.fw_delay(1, j) = mean(fw_delay, 'omitnan');
         AS.fw_delay(2, j) = std(fw_delay, 'omitnan');
 
-        AS.fw_percentage(j) = 100 * ( ...
+        AS.fw_occurence(j) = 100 * ( ...
             sum(~isnan(fw_duration)) ./ numel(fw_duration));
 
         % Perform analysis on fast-wave
