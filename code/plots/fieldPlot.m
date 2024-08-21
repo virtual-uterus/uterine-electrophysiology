@@ -58,6 +58,14 @@ for j = 1:size(selected_phase, 2)
             boxplotSetup(analysis_structs, cur_phase, offset, ...
                 "prop_dist");
             ylabel("Propagation distance (mm)")
+        case "delay"
+            boxplotSetup(analysis_structs, cur_phase, offset, ...
+                "fw_delay");
+            ylabel("Fast-wave delay (s)")
+        case "occurence"
+            boxplotSetup(analysis_structs, cur_phase, offset, ...
+                "fw_occurence");
+            ylabel("Fast-wave occurence (%)")
         case "direction"
             directionPlotSetup(analysis_structs, cur_phase, offset);
         case "frequency"
