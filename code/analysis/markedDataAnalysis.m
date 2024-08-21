@@ -155,6 +155,12 @@ for j = 1:nb_events
     end
 end
 
+%% Reset indexation to remove unprocessed events if needed
+if AS.nb_events ~= valid_events
+    AS = removeUnprocessedEvents(AS);
+    AS.nb_events = valid_events;
+end
+
 % Event occurence rate in events/min
 AS.EOR = 60 * valid_events / (params.end_time - params.start_time); 
 end
