@@ -12,7 +12,7 @@ function fieldPlot(analysis_structs, field, phase, dir_path)
 %       analysis structure information to plot.
 %    - phase, {'proestrus', 'estrus', 'metestrus', 'diestrus', 'all'},
 %    phase of the cycle to plot or plot all if 'all' is selected.
-%    - dir_path, path to the directory to save figures from base_dir
+%    - dir_path, path to the directory to save figures from base_dir.
 %   
 %   Return: 
 phases = estrusPhases();
