@@ -32,6 +32,7 @@ else
 end
 
 xtick_marks = zeros(1, size(selected_phase, 2));
+y_min = 0;
 
 for j = 1:size(selected_phase, 2)
     cur_phase = selected_phase(j);
@@ -62,6 +63,8 @@ for j = 1:size(selected_phase, 2)
             boxplotSetup(analysis_structs, cur_phase, offset, ...
                 "fw_delay");
             ylabel("Fast-wave delay (s)")
+            y_min = ylim();
+            y_min = y_min(1); % Get the negative min value
         case "occurence"
             boxplotSetup(analysis_structs, cur_phase, offset, ...
                 "fw_occurence");
@@ -84,7 +87,7 @@ end
     
     % Get maximum ylim value and set y limits
     yl = ylim();
-    ylim([0, yl(2)]);
+    ylim([y_min, yl(2)]);
 
     fig = gcf;
     exportgraphics(fig, strcat(save_dir, '/', field, ".png"), ...
