@@ -24,8 +24,8 @@ end
 
 for k = 1:nb_expts
     AS = analysis_structs.(phase)(k); % Analysis structure
-    mean_data(k) = mean(AS.(field)(1, (AS.(field)(1, :) > 0)));
-    plotted_data = [plotted_data, AS.(field)(1, (AS.(field)(1, :) > 0))];
+    mean_data(k) = mean(AS.(field)(1, :));
+    plotted_data = [plotted_data, AS.(field)(1, :)];
 end
 
 % Plot data points

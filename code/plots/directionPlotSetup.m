@@ -19,11 +19,10 @@ cmap = [[0.4940 0.1840 0.5560];
 for k = 1:nb_expts
     AS = analysis_structs.(phase)(k); % Analysis structure
     prop_direction = AS.("prop_direction")(1, :);
-    nb_events = numel(prop_direction);
 
-    direction_percents = 100 .* [(sum(prop_direction > 0) / nb_events)
-     (sum(prop_direction < 0) / nb_events)
-     (sum(prop_direction == 0) / nb_events)]; % O -> C, C -> O, D
+    direction_percents = 100 .* [(sum(prop_direction > 0) / AS.nb_events)
+     (sum(prop_direction < 0) / AS.nb_events)
+     (sum(prop_direction == 0) / AS.nb_events)]; % O -> C, C -> O, D
     b = bar(j+(k-1)*offset, direction_percents, ...
         "stacked", ...
         "BarWidth", 0.05, ...
