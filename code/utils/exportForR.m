@@ -1,4 +1,4 @@
-function convertToR(analysis_structs, dir_path)
+function exportForR(analysis_structs, dir_path)
 %CONVERTTOR Transform data into csv tables that can be read into R.
 %
 %   Input:
