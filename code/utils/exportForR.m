@@ -31,8 +31,8 @@ for j = 1:numel(stages)
         % Check if metric exists in structure
         if isfield(stage_data, metric)
             % Allocate array for metric data for all experiments
-            data = nan(length(stage_data), max(arrayfun(@(x) length( ...
-                x.(metric)), stage_data)));
+            data = nan(max(arrayfun(@(x) length( ...
+                x.(metric)), stage_data)), length(stage_data));
         else
             warning("Field %s not found in stage %s. Skipping", ...
                 metric, stage_name);
@@ -41,7 +41,7 @@ for j = 1:numel(stages)
 
         for k = 1:length(stage_data)
             metric_data = stage_data(k).(metric);
-            data(k, 1:length(metric_data)) = metric_data(1, :);
+            data(1:length(metric_data), k) = metric_data(1, :)';
         end
         filename = fullfile(stage_dir, metric + '.csv');
         writematrix(data, filename);
