@@ -19,27 +19,23 @@ plot_anova_results <- function(data, model, metric) {
     ) + # Boxplot
     geom_point(
       data = data_means,
-      aes(x = Phase, y = Mean, color = Experiment),
+      aes(x = Phase, y = Mean, color = "#FF0000"),
       size = 3,
       shape = 16,
       show.legend = FALSE
     ) + # Mean points
-    theme_minimal() +
+    theme_classic(base_size = 14) +
+    scale_x_discrete(labels = function(x) {
+      tools::toTitleCase(x)
+    }) + # Capitalize first letter of x-axis labels
     labs(
       x = "Estrus phase",
       y = get_label(metric)
     ) +
     scale_fill_brewer(palette = "Pastel1") +
-    scale_color_manual(
-      values = rainbow(
-        length(
-          unique(data_means$Experiment)
-        )
-      )
-    ) # Different colors for each experiment
 
-  # Define comparisons and their y-positions
-  comparisons <- list(
+    # Define comparisons and their y-positions
+    comparisons <- list(
     c("metestrus", "diestrus"),
     c("estrus", "metestrus"),
     c("estrus", "diestrus"),
