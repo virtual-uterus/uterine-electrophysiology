@@ -58,4 +58,4 @@ plot_anova_results(long_data, model, metric)
 # Save the plot to a file
 save_file <- paste0(metric, ".png")
 save_path <- file.path(file.path(base_dir(), args$save_dir), save_file)
-ggsave(save_path, plot = last_plot(), width = 8, height = 6)
+ggsave(save_path, plot = last_plot(), dpi = 300)
