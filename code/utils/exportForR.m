@@ -1,5 +1,5 @@
 function exportForR(analysis_structs, dir_path)
-%CONVERTTOR Exports certain metrics into csv tables that can be read into 
+%EXPORTFORR Exports certain metrics into csv tables that can be read into 
 % R. The function creates one folder for each estrus stage at the end of
 % dir_path. 
 %
@@ -15,7 +15,7 @@ function exportForR(analysis_structs, dir_path)
 stages = fieldnames(analysis_structs);
 save_dir = join([baseDir(), dir_path], '/');
 export_metrics = ["sw_duration", "fw_duration", "fw_occurence", ...
-    "event_interval", "prop_vel", "fw_delay"];  % Metrics to export
+    "event_interval", "prop_vel", "fw_delay", "prop_direction"];
 
 for j = 1:numel(stages)
     stage_name = stages{j};
