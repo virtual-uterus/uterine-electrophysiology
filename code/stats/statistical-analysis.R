@@ -6,6 +6,7 @@ if (!require("ggplot2")) install.packages("ggplot2")
 if (!require("argparse")) install.packages("argparse")
 if (!require("ggsignif")) install.packages("ggsignif", dependencies = TRUE)
 if (!require("lme4")) install.packages("lme4")
+if (!require("emmeans")) install.packages("emmeans")
 
 # Load required packages
 library(argparse)
@@ -13,6 +14,7 @@ library(lme4)
 library(tidyverse)
 library(ggplot2)
 library(ggsignif)
+library(emmeans)
 
 # Source other scripts
 source("utils.R")
