@@ -8,12 +8,12 @@ base_dir <- function() {
 
 # Function to load specific metric data and add a phase column
 load_metric <- function(metric, path) {
-  # Define the estrous stages and initialize an empty list to store the data
-  estrous_stages <- c("proestrus", "estrus", "metestrus", "diestrus")
+  # Define the estrus stages and initialize an empty list to store the data
+  estrus_stages <- c("proestrus", "estrus", "metestrus", "diestrus")
   metric_data <- list()
 
-  # Loop over each estrous stage
-  for (stage in estrous_stages) {
+  # Loop over each estrus stage
+  for (stage in estrus_stages) {
     # Construct the file path
     file_path <- file.path(path, stage, paste0(metric, ".csv"))
 
@@ -32,7 +32,7 @@ load_metric <- function(metric, path) {
   return(metric_data)
 }
 
-# Function to combine data from different estrous stages
+# Function to combine data from different estrus stages
 combine_data <- function(data_list) {
   # Combine data from different stages
   combined_data <- bind_rows(data_list, .id = "Phase")
