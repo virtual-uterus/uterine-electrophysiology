@@ -93,6 +93,10 @@ for j = 1:nb_events
         if valid_events > 1
             past_event_data = removeDuplicatePoints( ...
                 marks{event_idx(j-1)}(:, 3:4)); % Timestamps and chns
+            % Reset times
+            past_event_data(:, 1) = past_event_data(:, 1) - ...
+                double(params.start_time);
+
             % If using channels 65 to 128 remove 64
             if all(past_event_data(:, 2) > 64)
                 past_event_data(:, 2) = past_event_data(:, 2) - 64;
