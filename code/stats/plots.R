@@ -12,6 +12,10 @@ plot_anova_results <- function(data, model, metric) {
 
   # Compute maximum y-values for each comparison to avoid overlap
   y_max <- max(data$Value, na.rm = TRUE)
+  y_min <- min(data$Value, na.rm = TRUE)
+
+  # Set y_min to 0 if y_min is positive, otherwise set it to y_min
+  y_min <- ifelse(y_min > 0, 0, y_min)
 
   # Calculate the means for each experiment within each phase
   data_means <- data %>%
@@ -40,7 +44,7 @@ plot_anova_results <- function(data, model, metric) {
       y = get_label(metric)
     ) +
     scale_fill_brewer(palette = "Pastel1") +
-    coord_cartesian(ylim = c(0, NA))
+    coord_cartesian(ylim = c(y_min, NA))
 
   # Extract pairwise comparisons from the model
   pairwise_comparisons <- emmeans::emmeans(model, pairwise ~ Phase)
