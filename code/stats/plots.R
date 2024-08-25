@@ -31,7 +31,7 @@ plot_anova_results <- function(data, model, metric) {
       shape = 16,
       show.legend = FALSE
     ) +
-    theme_classic(base_size = 14) +
+    theme_classic(base_size = 21) +
     scale_x_discrete(labels = function(x) {
       tools::toTitleCase(x)
     }) +
@@ -63,7 +63,7 @@ plot_anova_results <- function(data, model, metric) {
     ))
 
   # Define y-offsets for significance bars to prevent overlap
-  offset <- y_max * 0.05 # Increase the offset as needed
+  offset <- y_max * 0.10 # Increase the offset as needed
 
   # Generate y_positions for each comparison
   y_positions <- y_max + seq_along(comparisons) * offset
@@ -73,11 +73,11 @@ plot_anova_results <- function(data, model, metric) {
     comparisons = comparisons,
     annotations = comparison_results$stars,
     map_signif_level = FALSE,
-    textsize = 3,
-    tip_length = 0.01, # Controls the length of the brackets
-    vjust = 0.5, # Vertical adjustment
+    textsize = 5,
+    tip_length = 0.02, # Controls the length of the brackets
     y_position = y_positions,
-    margin_top = 0.1
+    margin_top = 0.1,
+    size = 1.3
   )
 }
 
@@ -90,9 +90,9 @@ plot_prop_direction <- function(data) {
       y = "Propagation directions (%)"
     ) +
     scale_x_discrete(labels = function(x) {
-      tools::toTitleCase(x)
-    }) + # Capitalize first letter of x-axis labels
+      toupper(substr(x, 1, 1))
+    }) + # Use only the first letter and capitalise it
     scale_fill_brewer(palette = "Pastel1") +
-    theme_classic(base_size = 14) +
+    theme_classic(base_size = 21) +
     theme(legend.title = element_blank()) # Remove the legend title
 }
