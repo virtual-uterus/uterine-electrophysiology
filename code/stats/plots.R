@@ -60,4 +60,18 @@ plot_anova_results <- function(data, model, metric) {
     textsize = 3,
     y_position = y_positions
   )
+# Function to plot the propagation direction data
+plot_prop_direction <- function(data) {
+  p <- ggplot(data, aes(x = Phase, y = Value, fill = Direction)) +
+    geom_bar(stat = "identity", position = "stack") +
+    labs(
+      x = "Estrus phase",
+      y = "Propagation directions (%)"
+    ) +
+    scale_x_discrete(labels = function(x) {
+      tools::toTitleCase(x)
+    }) + # Capitalize first letter of x-axis labels
+    scale_fill_brewer(palette = "Pastel1") +
+    theme_classic(base_size = 14) +
+    theme(legend.title = element_blank()) # Remove the legend title
 }
