@@ -1,37 +1,22 @@
 # plots.R
 # This script contains plotting functions
 
+library(tidyverse)
+library(ggplot2)
+library(ggsignif)
+library(emmeans)
+
 # Function to plot the statistical analysis results
 plot_anova_results <- function(data, model, metric) {
   data <- data %>% filter(is.finite(Value))
+
+  # Compute maximum y-values for each comparison to avoid overlap
+  y_max <- max(data$Value, na.rm = TRUE)
 
   # Calculate the means for each experiment within each phase
   data_means <- data %>%
     group_by(Phase, Experiment) %>%
     summarise(Mean = mean(Value, na.rm = TRUE), .groups = "drop")
-
-  # Perform ANOVA
-  aov_results <- aov(Value ~ Phase, data = data)
-  summary(aov_results)
-
-  # Perform post-hoc test if ANOVA is significant
-  if (summary(aov_results)[[1]][["Pr(>F)"]][1] < 0.05) {
-    posthoc_results <- TukeyHSD(aov_results)
-
-    # Extract the results for plotting
-    comparisons <- rownames(posthoc_results$Phase)
-    p_values <- posthoc_results$Phase[, "p adj"]
-    y_positions <- seq(max(data$Value, na.rm = TRUE) + 0.05, length.out = length(comparisons))
-
-    sig_data <- data.frame(
-      group1 = sapply(strsplit(comparisons, "-"), `[`, 1),
-      group2 = sapply(strsplit(comparisons, "-"), `[`, 2),
-      p_value = p_values,
-      y_position = y_positions
-    )
-  } else {
-    sig_data <- NULL
-  }
 
   # Plot
   p <- ggplot(data, aes(x = Phase, y = Value)) +
@@ -54,23 +39,46 @@ plot_anova_results <- function(data, model, metric) {
       x = "Estrus phase",
       y = get_label(metric)
     ) +
-    scale_fill_brewer(palette = "Pastel1")
+    scale_fill_brewer(palette = "Pastel1") +
+    coord_cartesian(ylim = c(0, NA))
 
-  if (!is.null(sig_data)) {
-    p <- p + geom_signif(
-      comparisons = list(
-        c("metestrus", "diestrus"),
-        c("estrus", "metestrus"),
-        c("estrus", "diestrus"),
-        c("proestrus", "estrus"),
-        c("proestrus", "metestrus"),
-        c("proestrus", "diestrus")
-      ),
-      map_signif_level = TRUE,
-      textsize = 3,
-      y_position = sig_data$y_position
-    )
-  }
+  # Extract pairwise comparisons from the model
+  pairwise_comparisons <- emmeans::emmeans(model, pairwise ~ Phase)
+  comparison_results <- as.data.frame(pairwise_comparisons$contrasts)
+  comparison_results <- comparison_results[rev(
+    seq_len(nrow(comparison_results))
+  ), ]
+
+  comparisons <- comparison_results %>%
+    mutate(contrast = strsplit(as.character(contrast), " - ")) %>%
+    pull(contrast)
+
+  # Map p-values to stars
+  comparison_results <- comparison_results %>%
+    mutate(stars = case_when(
+      p.value < 0.001 ~ "***",
+      p.value < 0.01 ~ "**",
+      p.value < 0.05 ~ "*",
+      TRUE ~ "ns"
+    ))
+
+  # Define y-offsets for significance bars to prevent overlap
+  offset <- y_max * 0.05 # Increase the offset as needed
+
+  # Generate y_positions for each comparison
+  y_positions <- y_max + seq_along(comparisons) * offset
+
+  # Plot with adjusted significance bars
+  p <- p + geom_signif(
+    comparisons = comparisons,
+    annotations = comparison_results$stars,
+    map_signif_level = FALSE,
+    textsize = 3,
+    tip_length = 0.01, # Controls the length of the brackets
+    vjust = 0.5, # Vertical adjustment
+    y_position = y_positions,
+    margin_top = 0.1
+  )
 }
 
 # Function to plot the propagation direction data
