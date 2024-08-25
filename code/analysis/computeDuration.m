@@ -34,17 +34,20 @@ start_times = nan(1, nb_chns);
 end_times = nan(1, nb_chns);
 
 for j = chns
-    % Find events using the trend of the signal
-    trend = trenddecomp(abs(signal(:, j)), 'ssa', ...
-        round(nb_samples*sample_percent));
-
     if strcmp(type, 'burst')
+        % Find events using the trend of the abs of the signal 
+        trend = trenddecomp(abs(signal(:, j)), 'ssa', ...
+            round(nb_samples*sample_percent));
         % If looking at bursts isolate signals with bursts using variance
         if var(trend) <= 5
             continue
         end
-    end
     
+    else
+        % Find events using the trend of the signal
+        trend = trenddecomp(signal(:, j), 'ssa', ...
+            round(nb_samples*sample_percent));
+    end
     % Detect using a combination of thresholding and peak detection
     idx = trend >= mean(trend); % Thresholding
 
