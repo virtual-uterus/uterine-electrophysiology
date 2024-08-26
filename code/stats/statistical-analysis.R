@@ -51,7 +51,6 @@ long_data <- combined_data %>%
   select(Phase, Experiment, Value)
 
 # Perform mixed-effects model
-library(lme4)
 model <- lmer(Value ~ Phase + (1 | Experiment), data = long_data)
 
 # Plot results
