@@ -7,6 +7,7 @@ if (!require("argparse")) install.packages("argparse")
 if (!require("ggsignif")) install.packages("ggsignif", dependencies = TRUE)
 if (!require("lme4")) install.packages("lme4")
 if (!require("emmeans")) install.packages("emmeans")
+if (!require("car")) install.packages("car")
 
 # Load required packages
 library(argparse)
@@ -15,6 +16,7 @@ library(tidyverse)
 library(ggplot2)
 library(ggsignif)
 library(emmeans)
+library(car)
 
 # Source other scripts
 source("utils.R")
@@ -49,6 +51,21 @@ combined_data <- combine_data(data)
 long_data <- combined_data %>%
   pivot_longer(cols = -Phase, names_to = "Experiment", values_to = "Value") %>%
   select(Phase, Experiment, Value)
+
+# Check normality using Shapiro-Wilk test for each phase
+normality_results <- long_data %>%
+  group_by(Phase) %>%
+  summarize(normality_p = shapiro.test(Value)$p.value)
+
+# Print normality results
+print(normality_results)
+
+# Check homogeneity of variances using Levene's test
+levene_test_result <- car::leveneTest(Value ~ Phase, data = long_data)
+
+# Print Levene's test results
+print(levene_test_result)
+
 
 # Perform mixed-effects model
 model <- lmer(Value ~ Phase + (1 | Experiment), data = long_data)
