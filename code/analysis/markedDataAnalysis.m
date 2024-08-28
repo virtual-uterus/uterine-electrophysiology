@@ -166,5 +166,5 @@ if AS.nb_events ~= valid_events
 end
 
 % Event occurence rate in events/min
-AS.EOR = 60 * valid_events / (params.end_time - params.start_time); 
+AS.EOR = 60 ./ mean(AS.event_interval(1, :)); 
 end
