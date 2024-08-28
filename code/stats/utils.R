@@ -48,7 +48,7 @@ get_label <- function(metric) {
     "fw_duration" = "Fast-wave duration (s)",
     "fw_delay" = "Fast-wave delay (s)",
     "event_interval" = "Event interval (s)",
-    "fw_occurence" = "Fast-wave occurence (%)",
+    "fw_occurrence" = "Fast-wave occurrence (%)",
     "prop_vel" = "Propagation velocity (mm/s)",
     "Unknown Metric" # Fallback for metrics not listed
   )

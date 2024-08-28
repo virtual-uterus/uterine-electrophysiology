@@ -65,10 +65,10 @@ for j = 1:size(selected_phase, 2)
             ylabel("Fast-wave delay (s)")
             y_min = ylim();
             y_min = y_min(1); % Get the negative min value
-        case "occurence"
+        case "occurrence"
             boxplotSetup(analysis_structs, cur_phase, offset, ...
-                "fw_occurence");
-            ylabel("Fast-wave occurence (%)")
+                "fw_occurrence");
+            ylabel("Fast-wave occurrence (%)")
         case "direction"
             directionPlotSetup(analysis_structs, cur_phase, offset);
         case "frequency"

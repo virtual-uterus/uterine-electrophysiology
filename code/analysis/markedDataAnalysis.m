@@ -33,7 +33,7 @@ close all; % Close the UTEMS window
 win_size = double(params.win_size .* Fs);
 nb_points = length(tvec); % Number of sampling points
 
-%% Determine the event occurence rate
+%% Determine the event occurrence rate
 nb_marks = length(marks);
 
 if nb_marks == 0
@@ -139,7 +139,7 @@ for j = 1:nb_events
         AS.fw_delay(1, j) = mean(fw_delay, 'omitnan');
         AS.fw_delay(2, j) = std(fw_delay, 'omitnan');
 
-        AS.fw_occurence(j) = 100 * ( ...
+        AS.fw_occurrence(j) = 100 * ( ...
             sum(~isnan(fw_duration)) ./ numel(fw_duration));
 
         % Perform analysis on fast-wave
@@ -165,6 +165,6 @@ if AS.nb_events ~= valid_events
     AS.nb_events = valid_events;
 end
 
-% Event occurence rate in events/min
+% Event occurrence rate in events/min
 AS.EOR = 60 ./ mean(AS.event_interval(1, :)); 
 end

@@ -1,5 +1,5 @@
 function eorPlotSetup(analysis_structs, phase, offset)
-%EORPLOTSETUP Setups the plot for the event occurence rate.
+%EORPLOTSETUP Setups the plot for the event occurrence rate.
 %
 %   Input:
 %    - analysis_structs, structure containing the analysis structures of
@@ -17,11 +17,11 @@ color = getPhaseColor(phase);
 for k = 1:nb_expts
     AS = analysis_structs.(phase)(k); % Analysis structure
 
-    % Event occurence rate scatter plot
+    % Event occurrence rate scatter plot
     scatter(j+(k-1)*offset, AS.("EOR"), 36, color, "filled");
     hold on;
 
 end
 
-ylabel("Event occurence rate (events/min)")
+ylabel("Event occurrence rate (events/min)")
 end
