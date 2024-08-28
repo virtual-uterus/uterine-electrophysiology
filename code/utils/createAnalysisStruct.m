@@ -9,7 +9,7 @@ function analysis_struct = createAnalysisStruct(nb_events)
 %    - analysis_struct, analysis structure containing the empty arrays for
 %    the analysis metrics.
 %       nb_events, number of events to analyse in the data.
-%       EOR, event occurrence rate.
+%       EOR, event occurrence rate (events/min).
 %       prop_vel, propagation velocity in mm/s, prop_vel(1 x NB_EVENTS).
 %       prop_dist, propagation distance in mm, 
 %           prop_distance(1 x NB_EVENTS).
