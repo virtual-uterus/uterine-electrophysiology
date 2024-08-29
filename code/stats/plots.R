@@ -43,7 +43,7 @@ plot_anova_results <- function(data, model, metric) {
       x = "Estrus phase",
       y = get_label(metric)
     ) +
-    scale_fill_brewer(palette = "Pastel1") +
+    scale_fill_brewer(palette = "Accent") +
     coord_cartesian(ylim = c(y_min, NA))
 
   # Extract pairwise comparisons from the model
@@ -96,7 +96,7 @@ plot_prop_direction <- function(data) {
     scale_x_discrete(labels = function(x) {
       toupper(substr(x, 1, 1))
     }) + # Use only the first letter and capitalise it
-    scale_fill_brewer(palette = "Pastel1") +
+    scale_fill_brewer(palette = "Accent") +
     theme_classic(base_size = 21) +
     theme(legend.title = element_blank()) # Remove the legend title
 }
