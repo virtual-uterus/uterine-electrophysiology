@@ -37,7 +37,7 @@ prop_directions(min_ind > max_ind) = -1; % Cervix to ovaries
 [grp_size, vals] = groupcounts(prop_directions');
 [max_val, max_idx] = max(grp_size); 
 
-if max_val == 2 && sum(vals) == 0
+if max_val == 2 && numel(grp_size) == 2 && sum(vals) == 0
     prop_direction = 2; % Split direction
 
 else
