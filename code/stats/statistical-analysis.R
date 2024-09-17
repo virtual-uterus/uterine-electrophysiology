@@ -45,30 +45,23 @@ metric <- args$metric
 data <- load_metric(metric, data_dir)
 
 # Combine data
-combined_data <- combine_data(data)
-
-# Reshape the data by pivoting all columns except for 'Phase'
-long_data <- combined_data %>%
-  pivot_longer(cols = -Phase, names_to = "Experiment", values_to = "Value") %>%
-  select(Phase, Experiment, Value)
-
-# Check normality using Shapiro-Wilk test for each phase
-normality_results <- long_data %>%
-  group_by(Phase) %>%
-  summarize(normality_p = shapiro.test(Value)$p.value)
-
-# Print normality results
-print(normality_results)
-
-# Check homogeneity of variances using Levene's test
-levene_test_result <- car::leveneTest(Value ~ Phase, data = long_data)
-
-# Print Levene's test results
-print(levene_test_result)
-
+long_data <- combine_data(data)
 
 # Perform mixed-effects model
-model <- lmer(Value ~ Phase + (1 | Experiment), data = long_data)
+model <- lmer(Value ~ Phase + (1 | Experiment / Event), data = long_data)
+
+# Extract residuals from the model
+residuals <- residuals(model)
+
+ks_test_res <- ks.test(residuals(model),
+  "pnorm",
+  mean = mean(residuals(model)), sd = sd(residuals(model))
+)
+print(ks_test_res)
+
+# Plot a Q-Q plot to visually inspect the residuals for normality
+qqnorm(residuals)
+qqline(residuals)
 
 # Plot results
 plot_anova_results(long_data, model, metric)

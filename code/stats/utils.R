@@ -19,10 +19,31 @@ load_metric <- function(metric, path) {
 
     # Check if the file exists
     if (file.exists(file_path)) {
-      # Read the data and add a column for the phase
-      data <- read.csv(file_path)
-      data$Phase <- stage
-      metric_data[[stage]] <- data
+      # Read the data, first row as column names (experiment names)
+      data <- read.csv(file_path, header = FALSE)
+
+      # Extract experiment numbers (first row) and event numbers (second row)
+      experiment_numbers <- as.character(data[1, ])
+      event_numbers <- as.character(data[2, ])
+
+      # Extract the actual observation data (from the third row onwards)
+      observations <- data[-c(1, 2), ]
+
+      # Convert the data to long format
+      long_data <- pivot_longer(as.data.frame(observations),
+        cols = everything(),
+        names_to = NULL,
+        values_to = "Value"
+      )
+
+      # Add the experiment and event columns and phase
+      long_data$Experiment <- rep(experiment_numbers, each = nrow(observations))
+      long_data$Event <- rep(event_numbers, each = nrow(observations))
+      long_data$Phase <- stage
+      long_data$Value <- as.numeric(long_data$Value)
+
+      # Store the reshaped data in the list
+      metric_data[[stage]] <- long_data
     } else {
       warning(sprintf('File "%s" not found. Skipping.', file_path))
       metric_data[[stage]] <- data.frame() # Empty data frame if file not found
