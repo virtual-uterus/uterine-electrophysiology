@@ -41,13 +41,6 @@ data <- load_metric(metric, data_dir)
 # Combine data
 combined_data <- combine_data(data)
 
-# Reshape the data by pivoting all columns except for 'Phase'
-long_data <- combined_data %>%
-  pivot_longer(
-    cols = -Phase, names_to = "Experiment", values_to = "Direction"
-  ) %>%
-  select(Phase, Experiment, Direction)
-
 # Calculate the percentage of each direction type
 processed_data <- long_data %>%
   filter(!is.na(Direction)) %>% # Remove NA values
