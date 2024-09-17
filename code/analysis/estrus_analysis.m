@@ -12,6 +12,7 @@ params = toml.map_to_struct(toml_map);
 phase_data = params.phases;
 phases = fieldnames(phase_data);
 analysis_structs = struct();  % Structure containing phase results
+export_struct = struct();
 
 for j = 1:size(phases, 1)
     disp(strcat("Current phase: ", phases{j}));
@@ -19,10 +20,16 @@ for j = 1:size(phases, 1)
 
     analysis_structs.(phases{j}) = arrayfun(@createAnalysisStruct, ...
         size(base_names, 2)); % Create array of empty analysis structures
+    export_struct.(phases{j}) = []; % Create empty export structure
 
     for k = 1:size(base_names, 2)
         disp(strcat("  Expt ", base_names(k)));
-        analysis_structs.(phases{j})(k) = markedDataAnalysis( ...
-            dir_path, string(base_names(k)));
+        [analysis_structs.(phases{j})(k), export_cells] = ...
+            markedDataAnalysis(dir_path, string(base_names(k)));
+        export_struct.(phases{j}) = [export_struct.(phases{j}); 
+            repmat( ...
+            base_names(k), size(export_cells, 1), 1), ...
+            export_cells];
     end
+
 end

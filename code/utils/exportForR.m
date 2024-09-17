@@ -1,4 +1,4 @@
-function exportForR(analysis_structs, dir_path)
+function exportForR(export_struct, dir_path)
 %EXPORTFORR Exports certain metrics into csv tables that can be read into 
 % R. The function creates one folder for each estrus stage at the end of
 % dir_path. 
@@ -12,14 +12,14 @@ function exportForR(analysis_structs, dir_path)
 %    - dir_path, path to the directory to save data from base_dir.
 
 %   Return:
-stages = fieldnames(analysis_structs);
+stages = fieldnames(export_struct);
 save_dir = join([baseDir(), dir_path], '/');
-export_metrics = ["sw_duration", "fw_duration", "fw_occurrence", ...
-    "event_interval", "prop_vel", "fw_delay", "prop_direction"];
+export_metrics = ["prop_vel", "prop_direction", "event_interval", ...
+    "sw_duration", "fw_duration", "fw_delay", "fw_occurrence"];
 
 for j = 1:numel(stages)
     stage_name = stages{j};
-    stage_data = analysis_structs.(stage_name);
+    stage_data = export_struct.(stage_name);
     stage_dir = fullfile(save_dir, stage_name);
 
     % Create a folder for the current estrous stage if it doesn't exist
@@ -27,24 +27,32 @@ for j = 1:numel(stages)
         mkdir(stage_dir);
     end
 
+    cnt = 2; % Metric counter
+    
     for metric = export_metrics
-        % Check if metric exists in structure
-        if isfield(stage_data, metric)
-            % Allocate array for metric data for all experiments
-            data = nan(max(arrayfun(@(x) length( ...
-                x.(metric)), stage_data)), length(stage_data));
-        else
-            warning("Field %s not found in stage %s. Skipping", ...
-                metric, stage_name);
-            continue
-        end
+        % Allocate array for metric data for all experiments
+        data = nan(64, size(stage_data, 1));
 
         for k = 1:length(stage_data)
-            metric_data = stage_data(k).(metric);
-            data(1:length(metric_data), k) = metric_data(1, :)';
+            metric_data = stage_data{k, cnt};
+            data(1:length(metric_data), k) = metric_data(:);
         end
+
+        accum = accumarray(grp2idx(string(stage_data(:, 1)')), 1);
+        sum_accum = cumsum(accum);
+        event_numbers = zeros(1, size(stage_data(:, 1), 1));
+
+        for l = 1:size(accum, 1)
+            event_numbers(sum_accum(l) - accum(l) + 1:sum_accum(l)) = ...
+                1:accum(l);
+        end
+
         filename = fullfile(stage_dir, metric + '.csv');
-        writematrix(data, filename);
+        writematrix(string(stage_data(:, 1))', filename);
+        writematrix(event_numbers, filename,"WriteMode", "append");
+        writematrix(data, filename, "WriteMode", "append");
+
+        cnt = cnt + 1; % Update counter
     end
 end
 end
