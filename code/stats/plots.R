@@ -1,10 +1,10 @@
 # plots.R
 # This script contains plotting functions
 
-library(tidyverse)
-library(ggplot2)
-library(ggsignif)
-library(emmeans)
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(ggsignif))
+suppressPackageStartupMessages(library(emmeans))
 
 # Function to plot the statistical analysis results
 plot_anova_results <- function(data, model, metric) {

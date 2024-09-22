@@ -1,14 +1,10 @@
 # direction-analysis.R
 # This script loads and plots the propagation direction
 
-if (!require("tidyverse")) install.packages("tidyverse")
-if (!require("ggplot2")) install.packages("ggplot2")
-if (!require("argparse")) install.packages("argparse")
-
 # Load required packages
-library(argparse)
-library(tidyverse)
-library(ggplot2)
+suppressPackageStartupMessages(library(argparse))
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(ggplot2))
 
 # Source other scripts
 source("utils.R")

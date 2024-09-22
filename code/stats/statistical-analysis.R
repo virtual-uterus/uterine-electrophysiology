@@ -1,22 +1,14 @@
 # statistical_analysis.R
 # This is the main script
 
-if (!require("tidyverse")) install.packages("tidyverse")
-if (!require("ggplot2")) install.packages("ggplot2")
-if (!require("argparse")) install.packages("argparse")
-if (!require("ggsignif")) install.packages("ggsignif", dependencies = TRUE)
-if (!require("lme4")) install.packages("lme4")
-if (!require("emmeans")) install.packages("emmeans")
-if (!require("car")) install.packages("car")
-
 # Load required packages
-library(argparse)
-library(lme4)
-library(tidyverse)
-library(ggplot2)
-library(ggsignif)
-library(emmeans)
-library(car)
+suppressPackageStartupMessages(library(argparse))
+suppressPackageStartupMessages(library(lme4))
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(ggsignif))
+suppressPackageStartupMessages(library(emmeans))
+suppressPackageStartupMessages(library(car))
 
 # Source other scripts
 source("utils.R")
