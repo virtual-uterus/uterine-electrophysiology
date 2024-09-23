@@ -19,7 +19,7 @@ plot_anova_results <- function(data, model, metric) {
 
   # Calculate the means for each experiment within each phase
   data_means <- data %>%
-    group_by(Phase, Experiment) %>%
+    group_by(Phase, Experiment, Transition) %>% 
     summarise(Mean = mean(Value, na.rm = TRUE), .groups = "drop")
 
   # Plot
@@ -29,7 +29,7 @@ plot_anova_results <- function(data, model, metric) {
     ) +
     geom_point(
       data = data_means,
-      aes(x = Phase, y = Mean, color = "#FF0000"),
+      aes(x = Phase, y = Mean, color = factor(Transition)),
       size = 3,
       shape = 16,
       show.legend = FALSE
