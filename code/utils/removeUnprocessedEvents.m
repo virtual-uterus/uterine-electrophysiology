@@ -11,7 +11,7 @@ function clean_AS = removeUnprocessedEvents(AS)
 fields = fieldnames(AS);
 valid_indices = AS.nb_samples > 0;  % Use number of samples to get events
 
-for j = 4:length(fields) % Skip first few fields
+for j = 5:length(fields) % Skip first few fields
     AS.(string(fields(j))) = AS.(string(fields(j)))(:, valid_indices);
 end
 

@@ -9,6 +9,8 @@ function analysis_struct = createAnalysisStruct(nb_events)
 %    - analysis_struct, analysis structure containing the empty arrays for
 %    the analysis metrics.
 %       nb_events, number of events to analyse in the data.
+%       transition, boolean value which is true (1) if the experiment is
+%       between two estrus stages, 0 otherwise.
 %       EOR, event occurrence rate (events/min).
 %       prop_vel, propagation velocity in mm/s, prop_vel(1 x NB_EVENTS).
 %       prop_dist, propagation distance in mm, 
@@ -48,6 +50,7 @@ metric_arr = zeros(2, nb_events); % Create array for metric and std
 % General information
 analysis_struct.name = string; % Experiment name
 analysis_struct.nb_events = nb_events;
+analysis_struct.transition = 0;
 analysis_struct.EOR = 0;
 analysis_struct.nb_samples = zeros(1, nb_events);
 analysis_struct.event_interval = zeros(3, nb_events-1);

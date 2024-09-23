@@ -72,6 +72,7 @@ valid_events = 0; % Count the number of events in desired times
 % Create analysis structure
 AS = createAnalysisStruct(nb_events);
 AS.name = base_name;
+AS.transition = params.transition;
 
 export_metrics = ["prop_vel", "prop_direction", "event_interval", ...
     "sw_duration", "fw_duration", "fw_delay", "fw_occurrence"];
