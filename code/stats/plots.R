@@ -63,7 +63,6 @@ plot_anova_results <- function(data, model, metric) {
       p.value < 0.001 ~ "***",
       p.value < 0.01 ~ "**",
       p.value < 0.05 ~ "*",
-      TRUE ~ "ns"
     ))
 
   # Define y-offsets for significance bars to prevent overlap
@@ -80,7 +79,7 @@ plot_anova_results <- function(data, model, metric) {
     textsize = 5,
     tip_length = 0.02, # Controls the length of the brackets
     y_position = y_positions,
-    margin_top = 0.1,
+    margin_top = 0.0,
     size = 1.3
   )
 }
