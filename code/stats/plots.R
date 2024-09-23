@@ -87,7 +87,7 @@ plot_anova_results <- function(data, model, metric) {
 
 # Function to plot the propagation direction data
 plot_prop_direction <- function(data) {
-  p <- ggplot(data, aes(x = Phase, y = Value, fill = Direction)) +
+  p <- ggplot(data, aes(x = Phase, y = Data, fill = Direction)) +
     geom_bar(stat = "identity", position = "stack") +
     labs(
       x = "Estrus phase",
