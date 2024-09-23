@@ -38,13 +38,13 @@ data <- load_metric(metric, data_dir)
 combined_data <- combine_data(data)
 
 # Calculate the percentage of each direction type
-processed_data <- long_data %>%
-  filter(!is.na(Direction)) %>% # Remove NA values
-  group_by(Phase, Direction) %>%
-  summarise(Value = n(), .groups = "drop") %>%
+processed_data <- combined_data %>%
+  filter(!is.na(Value)) %>% # Remove NA values
+  group_by(Phase, Value) %>%
+  summarise(Data = n(), .groups = "drop") %>%
   group_by(Phase) %>%
-  mutate(Value = 100 * Value / sum(Value)) %>%
-  mutate(Direction = factor(Direction,
+  mutate(Data = 100 * Data / sum(Data)) %>%
+  mutate(Direction = factor(Value,
     levels = c("1", "-1", "0", "2"),
     labels = c("Ovaries → Cervix", "Cervix → Ovaries", "Disorganised", "Mixed")
   ))
