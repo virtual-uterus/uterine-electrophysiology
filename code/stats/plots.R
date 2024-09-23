@@ -25,7 +25,6 @@ plot_anova_results <- function(data, model, metric) {
   # Plot
   p <- ggplot(data, aes(x = Phase, y = Value)) +
     geom_boxplot(aes(fill = Phase),
-      outlier.shape = NA,
       show.legend = FALSE
     ) +
     geom_point(
