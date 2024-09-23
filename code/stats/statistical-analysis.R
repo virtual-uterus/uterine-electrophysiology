@@ -40,7 +40,7 @@ data <- load_metric(metric, data_dir)
 long_data <- combine_data(data)
 
 # Perform mixed-effects model
-model <- lmer(Value ~ Phase + (1 | Experiment / Event), data = long_data)
+model <- lmer(Value ~ Phase + (1 | Experiment), data = long_data)
 
 # Extract residuals from the model
 residuals <- residuals(model)
