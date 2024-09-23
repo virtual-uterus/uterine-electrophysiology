@@ -51,10 +51,6 @@ ks_test_res <- ks.test(residuals(model),
 )
 print(ks_test_res)
 
-# Plot a Q-Q plot to visually inspect the residuals for normality
-qqnorm(residuals)
-qqline(residuals)
-
 # Plot results
 plot_anova_results(long_data, model, metric)
 
