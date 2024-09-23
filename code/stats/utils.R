@@ -38,7 +38,7 @@ load_metric <- function(metric, path) {
 
       # Add the experiment and event columns and phase
       long_data$Experiment <- rep(experiment_numbers, each = nrow(observations))
-      long_data$Event <- rep(event_numbers, each = nrow(observations))
+      long_data$Transition <- rep(event_numbers, each = nrow(observations))
       long_data$Phase <- stage
       long_data$Value <- as.numeric(long_data$Value)
 
