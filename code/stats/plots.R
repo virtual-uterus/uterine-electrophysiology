@@ -59,8 +59,6 @@ plot_anova_results <- function(data, model, metric) {
   # Map p-values to stars
   comparison_results <- comparison_results %>%
     mutate(stars = case_when(
-      p.value < 0.001 ~ "***",
-      p.value < 0.01 ~ "**",
       p.value < 0.05 ~ "*",
     ))
 
