@@ -30,19 +30,30 @@ for j = 1:numel(stages)
     end
 
     % Create experiment and transition labels
-    expts = string(export_structs.(stage_name)(:, 1)); % Expts labels
+    expts = categorical(export_structs.(stage_name)(:, 1)); % Expts labels
     expts_names = [stage_data.("name")];
-    transition_expts = expts_names(logical([stage_data.("transition")]));
-    transitions = sum(expts == transition_expts, 2); % Transition labels
+    transitions = [stage_data.("transition")]; % Transition labels
 
     for metric = export_metrics
         % Array with metric data for all experiments
         data = [stage_data.(metric)];
 
-        filename = fullfile(stage_dir, metric + '.csv');
-        writematrix(expts', filename);
-        writematrix(transitions', filename, "WriteMode", "append");
-        writematrix(data(1, :), filename, "WriteMode", "append");
+        if metric == "event_interval"
+            data = export_structs.(stage_name)(:, 4);
+            data = cellfun(@mean, data)';
+        end
+
+        if metric == "prop_direction"
+            data = [stage_data.(metric)];
+            filename = fullfile(stage_dir, metric + '.csv');
+            writematrix(data, filename);
+        else
+            data = grpstats(data(1, :), expts, 'mean')';
+            filename = fullfile(stage_dir, metric + '.csv');
+            writematrix(expts_names, filename);
+            writematrix(transitions, filename, "WriteMode", "append");
+            writematrix(data, filename, "WriteMode", "append");
+        end
     end
 end
 end
