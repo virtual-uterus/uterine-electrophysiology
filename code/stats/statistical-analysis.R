@@ -40,16 +40,7 @@ data <- load_metric(metric, data_dir)
 long_data <- combine_data(data)
 
 # Perform mixed-effects model
-model <- lmer(Value ~ Phase + (1 | Experiment), data = long_data)
-
-# Extract residuals from the model
-residuals <- residuals(model)
-
-ks_test_res <- ks.test(residuals(model),
-  "pnorm",
-  mean = mean(residuals(model)), sd = sd(residuals(model))
-)
-print(ks_test_res)
+model <- aov(Value ~ Phase, data = long_data)
 
 # Plot results
 plot_anova_results(long_data, model, metric)
