@@ -18,7 +18,6 @@ parser$add_argument("dir",
   type = "character",
   help = "path to data directory from base directory"
 )
-parser$add_argument("metric", type = "character", help = "metric to analyse")
 parser$add_argument("--save-dir",
   type = "character", default = "electrophys/figures/stats",
   help = "path to save directory"
@@ -29,10 +28,10 @@ args <- parser$parse_args()
 
 # Retrieve arguments
 data_dir <- file.path(base_dir(), args$dir)
-metric <- args$metric
+metric <- "prop_direction"
 
 # Load the data
-data <- load_metric(metric, data_dir)
+data <- load_direction(data_dir)
 
 # Combine data
 combined_data <- combine_data(data)
