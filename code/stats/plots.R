@@ -27,12 +27,13 @@ plot_anova_results <- function(data, model, metric) {
     geom_boxplot(aes(fill = Phase),
       show.legend = FALSE
     ) +
-    geom_point(
+    geom_jitter(
       data = data_means,
       aes(x = Phase, y = Mean, color = factor(Transition)),
       size = 3,
       shape = 16,
-      show.legend = FALSE
+      show.legend = FALSE,
+      width = 0.1
     ) +
     theme_classic(base_size = 21) +
     scale_x_discrete(labels = function(x) {
