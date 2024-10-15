@@ -1,5 +1,5 @@
 function [event_duration, start_times, end_times] = ...
-    computeDuration(signal, Fs, conn_thresh, sample_percent, type)
+    computeDuration(signal, Fs, win_split, sample_percent, type)
 %COMPUTEDURATION Computes the duration of the event in each channel.
 %This method uses a thresholding technique based on the average value of
 %the absolute signal. The type is used to run the burst detection
@@ -8,8 +8,8 @@ function [event_duration, start_times, end_times] = ...
 %   Input:
 %    - signal, signals to analyse, signal(NB_SAMPLES x CHANNELS).
 %    - Fs, sampling frequency.
-%    - conn_thresh, connection threshold used to determine if detected
-%    events should be fused or not. 
+%    - win_split, percentage of the window before the event timestamp used
+%    to find the peak closest to the mark.
 %    - sample_percent, percentage of NB_SAMPLES to use for window in the
 %    error correction and the number of RMS samples for the envelope.
 %    - type, str {'burst', 'swave'}, type of signal to process, default
@@ -48,37 +48,38 @@ for j = chns
         trend = trenddecomp(signal(:, j), 'ssa', ...
             round(nb_samples*sample_percent));
     end
-    % Detect using a combination of thresholding and peak detection
-    idx = trend >= mean(trend); % Thresholding
 
     % Find peaks and ensure the indices are in a valid range
-    [~, peak_loc, peak_width] = findpeaks(trend, ...
-        'MinPeakHeight', mean(trend), 'WidthReference', 'halfheight');
-    peak_min_max = [round(peak_loc - (peak_width /2)), ...
-        round(peak_loc + (peak_width / 2))];
-    peak_min_max(peak_min_max <= 0) = 1; 
-    peak_min_max(peak_min_max > nb_samples) = nb_samples; 
+    [~, peak_loc, peak_width] = findpeaks(trend);
 
-    for k = 1:size(peak_loc, 1)
-        idx(peak_min_max(k, 1):peak_min_max(k, 2)) = 1;
+    if ~isempty(peak_loc)
+        % If peaks have been found estimate duration
+        peak_min_max = [round(peak_loc - (peak_width /2)), ...
+            round(peak_loc + (peak_width / 2))];
+        peak_min_max(peak_min_max <= 0) = 1;
+        peak_min_max(peak_min_max > nb_samples) = nb_samples;
+
+        % Find peak closest to timestamp
+        [~, idx] = min(abs(peak_loc - round(win_split*length(trend))));
+
+        start_times(j) = peak_min_max(idx, 1); % Start of closest peak
+
+        % Find the end of the event by finding index where it crosses mean
+        [~, ~, crossing_idx] = zerocrossrate(trend, Level=mean(trend));
+        end_idx = find(crossing_idx(peak_min_max(idx, 2)) > 0);
+
+        if length(end_idx) < 2
+            end_times(j) = length(trend); % Event goes until end of window
+
+        else
+            end_times(j) = crossing_idx( ...
+                peak_min_max(idx, 2)) + end_idx(2) - 1;
+        end
     end
-
-    % Correct errors 
-    conn_idx = movmean(idx, round(0.05*nb_samples)) >= conn_thresh;
-    connections = bwconncomp(conn_idx);
-    connected_idx = connections.PixelIdxList;
-
-    % Find the length of each connected component
-    connection_len = cellfun(@numel, connected_idx);
-
-    % Find the index of the longest sequences
-    [~, max_idx] = max(connection_len);
-
-    event_idx = connected_idx{max_idx(1)}; % Default to longest event
-
-    start_times(j) = event_idx(1) / Fs;
-    end_times(j) = event_idx(end) / Fs;
 end
 
+% Convert into seconds and find duration
+start_times = start_times ./ Fs;
+end_times = end_times ./ Fs;
 event_duration = end_times - start_times;
 end
