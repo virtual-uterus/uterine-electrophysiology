@@ -23,8 +23,7 @@ for k = 1:nb_expts
 
     direction_percents = 100 .* [(sum(prop_direction == 1) / AS.nb_events)
      (sum(prop_direction < 0) / AS.nb_events)
-     (sum(prop_direction == 0) / AS.nb_events)
-     (sum(prop_direction == 2) / AS.nb_events)]; % O -> C, C -> O, D, S
+     (sum(prop_direction == 0) / AS.nb_events)]; % O -> C, C -> O, D
     b = bar(j+(k-1)*offset, direction_percents, ...
         "stacked", ...
         "BarWidth", 0.05, ...
