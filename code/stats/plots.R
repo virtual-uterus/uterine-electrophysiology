@@ -14,8 +14,14 @@ plot_anova_results <- function(data, model, metric) {
   y_max <- max(data$Value, na.rm = TRUE)
   y_min <- min(data$Value, na.rm = TRUE)
 
-  # Set y_min to 0 if y_min is positive, otherwise set it to y_min
-  y_min <- ifelse(y_min > 0, 0, y_min)
+  # Adjust y_min to 15 if metric is "sw_duration" or "fw_duration"
+  if (metric %in% c("fw_occurrence")) {
+    y_min <- 0
+  }
+  else if (metric %in% c("sw_duration", "fw_duration")) {
+    y_min <- 15
+    y_max <- 25
+  }
 
   # Calculate the means for each experiment within each phase
   data_means <- data %>%
