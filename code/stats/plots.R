@@ -53,33 +53,41 @@ plot_anova_results <- function(data, model, metric) {
     seq_len(nrow(comparison_results))
   ), ]
 
-  comparisons <- comparison_results %>%
-    mutate(contrast = strsplit(as.character(contrast), " - ")) %>%
-    pull(contrast)
-
   # Map p-values to stars
   comparison_results <- comparison_results %>%
     mutate(stars = case_when(
       p.value < 0.05 ~ "*",
     ))
 
-  # Define y-offsets for significance bars to prevent overlap
-  offset <- y_max * 0.10 # Increase the offset as needed
-
-  # Generate y_positions for each comparison
-  y_positions <- y_max + seq_along(comparisons) * offset
-
-  # Plot with adjusted significance bars
-  p <- p + geom_signif(
-    comparisons = comparisons,
-    annotations = comparison_results$stars,
-    map_signif_level = FALSE,
-    textsize = 5,
-    tip_length = 0.02, # Controls the length of the brackets
-    y_position = y_positions,
-    margin_top = 0.0,
-    size = 1.3
-  )
+  # Check if there are significant comparisons (excluding NA values)
+  significant_comparisons <- comparison_results %>%
+    filter(!is.na(stars) & stars != "")
+  comparisons <- significant_comparisons %>%
+    mutate(contrast = strsplit(as.character(contrast), " - ")) %>%
+    pull(contrast)
+  
+  if (nrow(significant_comparisons) > 0) {
+    # Define y-offsets for significance bars to prevent overlap, scaled based on the number of comparisons
+    offset <- y_max * 0.015 * (nrow(significant_comparisons))  # Adjust offset based on the number of bars
+    
+    # Generate y_positions for each comparison
+    bar_positions <- y_max + seq_len(nrow(significant_comparisons)) * offset
+    
+    # Plot with adjusted significance bars
+    p <- p + geom_signif(
+      comparisons = comparisons,
+      annotations = significant_comparisons$stars,
+      map_signif_level = FALSE,
+      textsize = 5,
+      tip_length = 0.02, # Controls the length of the brackets
+      y_position = bar_positions,
+      margin_top = 0.0,
+      size = 1.3
+    )
+  } else {
+    # If there are no significant comparisons, reset y_max
+    p <- p + coord_cartesian(ylim = c(y_min, y_max))
+  }
 }
 
 # Function to plot the propagation direction data
