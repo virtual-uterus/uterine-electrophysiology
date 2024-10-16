@@ -39,6 +39,13 @@ data <- load_metric(metric, data_dir)
 # Combine data
 long_data <- combine_data(data)
 
+# Check normality using Shapiro-Wilk test for each phase
+normality_results <- long_data %>%
+  group_by(Phase) %>%
+  summarize(normality_p = shapiro.test(Value)$p.value)
+# Print normality results
+print(normality_results)
+
 # Perform mixed-effects model
 model <- aov(Value ~ Phase, data = long_data)
 
