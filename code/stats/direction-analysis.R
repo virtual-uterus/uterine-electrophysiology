@@ -44,8 +44,8 @@ processed_data <- combined_data %>%
   group_by(Phase) %>%
   mutate(Data = 100 * Data / sum(Data)) %>%
   mutate(Direction = factor(Value,
-    levels = c("1", "-1", "0", "2"),
-    labels = c("Ovaries → Cervix", "Cervix → Ovaries", "Disorganised", "Mixed")
+    levels = c("1", "-1", "0"),
+    labels = c("Ovaries → Cervix", "Cervix → Ovaries", "Other")
   ))
 
 # Plot results
