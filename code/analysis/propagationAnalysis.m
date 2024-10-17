@@ -15,10 +15,7 @@ function [prop_dist, prop_vel, prop_direction] = propagationAnalysis( ...
 %       prop_vel(M x N).
 %    - prop_direction, propagation direction based on the trend of the mean
 %       timestamps, 1 ovaries -> cervix, -1 cervix -> ovaries, 0
-%       disorganised activity.
-[nb_rows, nb_cols] = size(arranged_times);
-prop_trends = zeros(nb_rows, nb_cols);
-prop_directions = ones(1, nb_cols); % Default direction ovaries to cervix
+%       other direction.
 mean_time = mean(arranged_times, 2, 'omitnan');
 
 %% Estimate propagation distance based on the mean times

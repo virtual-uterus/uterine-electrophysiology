@@ -37,5 +37,5 @@ end
 
 ylabel("Propagation directions (%)")
 
-legend("Ovaries -> cervix", "Cervix -> ovaries", "Disorganised", "Split")
+legend("Ovaries -> cervix", "Cervix -> ovaries", "Other")
 end
