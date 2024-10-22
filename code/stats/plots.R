@@ -19,7 +19,7 @@ plot_anova_results <- function(data, model, metric) {
     y_min <- 0
   }
   else if (metric %in% c("sw_duration", "fw_duration")) {
-    y_min <- 15
+    y_min <- 5
     y_max <- 25
   }
 
