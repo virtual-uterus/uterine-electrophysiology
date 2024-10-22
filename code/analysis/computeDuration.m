@@ -38,8 +38,11 @@ for j = chns
         % Find events using the trend of the abs of the signal 
         trend = trenddecomp(abs(signal(:, j)), 'ssa', ...
             round(nb_samples*sample_percent));
+        % Normalise trend
+        trend = trend ./ max(trend);
+
         % If looking at bursts isolate signals with bursts using variance
-        if var(trend) <= 5
+        if var(trend) <= 0.03
             continue
         end
     
