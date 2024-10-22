@@ -18,7 +18,7 @@ function [AS, export_cells] = markedDataAnalysis(dir_path, base_name, ...
 %    - export_cells, cell array containing all the processed data. Each row
 %       contains the data for one event. The columns are in order: 
 %       prop_vel, prop_direction, event_interval, sw_duration, fw_duration, 
-%       fw_delay, fw_occurrence
+%       fw_delay, fw_presence
 if nargin < 3
     export_stage = "none";
 end
@@ -50,8 +50,6 @@ close all; % Close the UTEMS window
 
 win_size = double(params.win_size .* Fs);
 nb_points = length(tvec); % Number of sampling points
-
-%% Determine the event occurrence rate
 nb_marks = length(marks);
 
 if nb_marks == 0
@@ -75,7 +73,7 @@ AS.name = base_name;
 AS.transition = params.transition;
 
 export_metrics = ["prop_vel", "prop_direction", "event_interval", ...
-    "sw_duration", "fw_duration", "fw_delay", "fw_occurrence"];
+    "sw_duration", "fw_duration", "fw_delay", "fw_presence"];
 export_cells = cell(nb_events, length(export_metrics));
 
 %% Frequency analysis on events
@@ -171,10 +169,10 @@ for j = 1:nb_events
         AS.fw_delay(1, j) = mean(fw_delay, 'omitnan');
         AS.fw_delay(2, j) = std(fw_delay, 'omitnan');
 
-        fw_occurrence = 100 * ( ...
+        fw_presence = 100 * ( ...
             sum(~isnan(fw_duration)) ./ numel(fw_duration));
-        export_cells{k, 7} = fw_occurrence;
-        AS.fw_occurrence(j) = fw_occurrence;
+        export_cells{k, 7} = fw_presence;
+        AS.fw_presence(j) = fw_presence;
         
         % Perform analysis on fast-wave
 %         [AS.fw_frequency(1, j), AS.fw_frequency(2, j)] = ...

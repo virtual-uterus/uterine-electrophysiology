@@ -58,28 +58,28 @@ load_direction <- function(path) {
   # Define the estrus stages and initialize an empty list to store the data
   estrus_stages <- c("proestrus", "estrus", "metestrus", "diestrus")
   metric_data <- list()
-  
+
   # Loop over each estrus stage
   for (stage in estrus_stages) {
     # Construct the file path
     file_path <- file.path(path, stage, paste0("prop_direction", ".csv"))
-    
+
     # Check if the file exists
     if (file.exists(file_path)) {
       # Read the data, first row as column names (experiment names)
       data <- read.csv(file_path, header = FALSE)
-      
+
       # Convert the data to long format
       long_data <- pivot_longer(as.data.frame(data),
-                                cols = everything(),
-                                names_to = NULL,
-                                values_to = "Value"
+        cols = everything(),
+        names_to = NULL,
+        values_to = "Value"
       )
-      
+
       # Add the phase
       long_data$Phase <- stage
       long_data$Value <- as.numeric(long_data$Value)
-      
+
       # Store the reshaped data in the list
       metric_data[[stage]] <- long_data
     } else {
@@ -87,7 +87,7 @@ load_direction <- function(path) {
       metric_data[[stage]] <- data.frame() # Empty data frame if file not found
     }
   }
-  
+
   return(metric_data)
 }
 
@@ -107,7 +107,7 @@ get_label <- function(metric) {
     "fw_duration" = "Fast-wave duration (s)",
     "fw_delay" = "Fast-wave delay (s)",
     "event_interval" = "Event interval (s)",
-    "fw_occurrence" = "Fast-wave occurrence (%)",
+    "fw_presence" = "Fast-wave presence (%)",
     "prop_vel" = "Propagation velocity (mm/s)",
     "Unknown Metric" # Fallback for metrics not listed
   )

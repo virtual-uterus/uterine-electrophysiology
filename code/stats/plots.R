@@ -15,7 +15,7 @@ plot_anova_results <- function(data, model, metric) {
   y_min <- min(data$Value, na.rm = TRUE)
 
   # Adjust y_min to 15 if metric is "sw_duration" or "fw_duration"
-  if (metric %in% c("fw_occurrence")) {
+  if (metric %in% c("fw_presence")) {
     y_min <- 0
   }
   else if (metric %in% c("sw_duration", "fw_duration")) {

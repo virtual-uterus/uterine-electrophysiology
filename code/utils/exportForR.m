@@ -3,7 +3,7 @@ function exportForR(analysis_structs, export_structs, dir_path)
 % R. The function creates one folder for each estrus stage at the end of
 % dir_path. 
 %
-%   The exported metrics are: sw_duration, fw_duration, fw_occurrence,
+%   The exported metrics are: sw_duration, fw_duration, fw_presence,
 %   prop_vel, event_interval, and fw_delay.
 %
 %   Input:
@@ -17,7 +17,7 @@ function exportForR(analysis_structs, export_structs, dir_path)
 stages = fieldnames(analysis_structs);
 save_dir = join([baseDir(), dir_path], '/');
 export_metrics = ["prop_vel", "prop_direction", "event_interval", ...
-    "sw_duration", "fw_duration", "fw_delay", "fw_occurrence"];
+    "sw_duration", "fw_duration", "fw_delay", "fw_presence"];
 
 for j = 1:numel(stages)
     stage_name = stages{j};
