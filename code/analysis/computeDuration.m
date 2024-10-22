@@ -50,31 +50,34 @@ for j = chns
     end
 
     % Find peaks and ensure the indices are in a valid range
-    [~, peak_loc, peak_width] = findpeaks(trend);
+    [~, peak_loc] = findpeaks(trend);
 
     if ~isempty(peak_loc)
         % If peaks have been found estimate duration
-        peak_min_max = [round(peak_loc - (peak_width /2)), ...
-            round(peak_loc + (peak_width / 2))];
-        peak_min_max(peak_min_max <= 0) = 1;
-        peak_min_max(peak_min_max > nb_samples) = nb_samples;
-
         % Find peak closest to timestamp
         [~, idx] = min(abs(peak_loc - round(win_split*length(trend))));
-
-        start_times(j) = peak_min_max(idx, 1); % Start of closest peak
-
-        % Find the end of the event by finding index where it crosses mean
-        [~, ~, crossing_idx] = zerocrossrate(trend, Level=mean(trend));
-        end_idx = find(crossing_idx(peak_min_max(idx, 2)) > 0);
-
-        if length(end_idx) < 2
-            end_times(j) = length(trend); % Event goes until end of window
-
-        else
-            end_times(j) = crossing_idx( ...
-                peak_min_max(idx, 2)) + end_idx(2) - 1;
+        peak_idx = peak_loc(idx); 
+        grad = gradient(trend);
+        [~, ~, crossing_idx] = zerocrossrate(grad);
+        crossing_idx = find(crossing_idx);
+        
+        % Start index is first direction change before peak
+        [~, start_idx] = min(abs(crossing_idx - peak_idx)); 
+        if start_idx == 1
+            start_idx = 2; % Default to 2 to avoid error
         end
+        start_times(j) = crossing_idx(start_idx-1);
+
+        % Second 0 cross after peak in gradient is return to baseline
+        if length(crossing_idx) >= start_idx + 2
+            end_idx = crossing_idx(start_idx + 2);
+        elseif length(crossing_idx) >= start_idx + 1
+            end_idx = crossing_idx(start_idx + 1); % Underestimate duration
+        else
+            end_idx = nb_samples; % Default to window edge
+        end
+            
+        end_times(j) = end_idx;
     end
 end
 
