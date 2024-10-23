@@ -7,6 +7,7 @@ function globalMetricValue(analysis_structs, metric_name)
 %    contains the analysis structures for each experiment.
 %    - metric_name, name of the metric to use.
 metric = [];
+phase_metric = [];
 phases = fieldnames(analysis_structs);
 
 if ~isfield(analysis_structs.("estrus")(1), metric_name)
@@ -18,10 +19,20 @@ for j = 1:length(phases)
     AS = analysis_structs.(phase);
 
     for k = size(AS)
-        metric = [metric, AS(k).(metric_name)];
+        phase_metric = [phase_metric, AS(k).(metric_name)];
     end
+
+    avg = mean(phase_metric, 2);
+    stdev = std(phase_metric, 0, 2);
+
+    disp([char(phase), ' ', char(metric_name), ': ', ...
+        num2str(avg(1)), ' ± ', num2str(stdev(1))])
+    metric = [metric, phase_metric];
+    phase_metric = [];
 end
+    avg = mean(metric, 2);
+    stdev = std(metric, 0, 2);
 disp(['Global ', char(metric_name), ': ', ...
-    num2str(mean(metric)), ' ± ', num2str(std(metric))])
+    num2str(avg(1)), ' ± ', num2str(stdev(1))])
 
 end
