@@ -1,7 +1,7 @@
 function [prop_dist, prop_vel, prop_direction] = propagationAnalysis( ...
     arranged_times, electrode_dist)
 %PROPAGATIONANALYSIS Computes the propagation metrics based on the arranged
-%timestamps of the event and the inter-electrode distance. 
+%timestamps of the event and the inter-electrode distance.
 %
 %   Inputs:
 %    - arranged_times, timestamps of the event arranged according to the
@@ -15,33 +15,26 @@ function [prop_dist, prop_vel, prop_direction] = propagationAnalysis( ...
 %       prop_vel(M x N).
 %    - prop_direction, propagation direction based on the trend of the mean
 %       timestamps, 1 ovaries -> cervix, -1 cervix -> ovaries, 0
-%       disorganised activity.
+%       other direction.
 mean_time = mean(arranged_times, 2, 'omitnan');
-
-%% Estimate propagation direction based on the trend of the mean tiems
-propagation_trend = trenddecomp(mean_time, 'ssa', 4);
-[~, cnt] = zerocrossrate(diff(propagation_trend), 'Method', 'comparison');
-
-if cnt >= 2
-    prop_direction = 0; % Disorganised activity
-
-else
-    [~, min_ind] = min(propagation_trend);
-    [~, max_ind] = max(propagation_trend);
-
-    if min_ind <= max_ind
-        prop_direction = 1; % Ovaries to cervix
-
-    else
-        prop_direction = -1; % Cervix to ovaries
-    end
-end
 
 %% Estimate propagation distance based on the mean times
 [~, min_ind] = min(mean_time);
 [~, max_ind] = max(mean_time);
 prop_dist = abs(electrode_dist * (max_ind - min_ind));
 
-%% Estimate propagation velocity using UTEMS code
-[~, ~, prop_vel] = calcVelocity(arranged_times, electrode_dist);
+%% Estimate propagation velocity and direction using UTEMS code
+[~, Vy, prop_vel] = calcVelocity(arranged_times, electrode_dist);
+
+% Remove values that are not from marked channels
+nan_chns = find(isnan(arranged_times));
+Vy(nan_chns) = nan;
+prop_vel(nan_chns) = nan;
+Vy_mean = mean(Vy, 'omitnan');
+Vy_mean(isnan(Vy_mean)) = [];  % In case a column has no marks
+
+if not(xor(any(Vy_mean > 0), all(Vy_mean > 0)))
+    prop_direction = sign(Vy_mean(1));
+else
+    prop_direction = 0;
 end

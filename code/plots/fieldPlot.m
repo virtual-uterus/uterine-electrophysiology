@@ -12,7 +12,7 @@ function fieldPlot(analysis_structs, field, phase, dir_path)
 %       analysis structure information to plot.
 %    - phase, {'proestrus', 'estrus', 'metestrus', 'diestrus', 'all'},
 %    phase of the cycle to plot or plot all if 'all' is selected.
-%    - dir_path, path to the directory to save figures from base_dir
+%    - dir_path, path to the directory to save figures from base_dir.
 %   
 %   Return: 
 phases = estrusPhases();
@@ -32,26 +32,49 @@ else
 end
 
 xtick_marks = zeros(1, size(selected_phase, 2));
+y_min = 0;
 
 for j = 1:size(selected_phase, 2)
     cur_phase = selected_phase(j);
     xtick_marks(j) = j + ...
         ((size(analysis_structs.(cur_phase), 2) - 1) * offset) / 2;
     switch field
-        case "duration"
-            durationPlotSetup(analysis_structs, cur_phase, offset);
-        case "eor"
-            eorPlotSetup(analysis_structs, cur_phase, offset);
+        case "sw_duration"
+            boxplotSetup(analysis_structs, cur_phase, offset, field);
+            ylabel("Slow-wave event durations (s)")
+            ylim([0, 35])
+        case "fw_duration"
+            boxplotSetup(analysis_structs, cur_phase, offset, field);
+            ylabel("Bursting event durations (s)")
+            ylim([0, 35])
         case "velocity"
-            velocityPlotSetup(analysis_structs, cur_phase, offset);
-        case "frequency"
-            frequencyPlotSetup(analysis_structs, cur_phase, offset);
+            boxplotSetup(analysis_structs, cur_phase, offset, ...
+                "prop_vel");
+            ylabel("Propagation velocity (mm/s)")
         case "interval"
-            intervalPlotSetup(analysis_structs, cur_phase, offset);
+            boxplotSetup(analysis_structs, cur_phase, offset, ...
+                "event_interval");
+            ylabel("Event interval (s)")
         case "distance"
-            distancePlotSetup(analysis_structs, cur_phase, offset);
+            boxplotSetup(analysis_structs, cur_phase, offset, ...
+                "prop_dist");
+            ylabel("Propagation distance (mm)")
+        case "delay"
+            boxplotSetup(analysis_structs, cur_phase, offset, ...
+                "fw_delay");
+            ylabel("Fast-wave delay (s)")
+            y_min = ylim();
+            y_min = y_min(1); % Get the negative min value
+        case "presence"
+            boxplotSetup(analysis_structs, cur_phase, offset, ...
+                "fw_presence");
+            ylabel("Fast-wave presence (%)")
         case "direction"
             directionPlotSetup(analysis_structs, cur_phase, offset);
+        case "frequency"
+            frequencyPlotSetup(analysis_structs, cur_phase, offset);
+        case "eor"
+            eorPlotSetup(analysis_structs, cur_phase, offset);
         otherwise
             error("Error: selected field is not valid.")
     end
@@ -64,7 +87,7 @@ end
     
     % Get maximum ylim value and set y limits
     yl = ylim();
-    ylim([0, yl(2)]);
+    ylim([y_min, yl(2)]);
 
     fig = gcf;
     exportgraphics(fig, strcat(save_dir, '/', field, ".png"), ...

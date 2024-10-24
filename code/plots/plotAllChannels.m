@@ -1,5 +1,5 @@
 function plotAllChannels(data, x_axis, electrode_cnfg, row)
-%PLOTMULTICHANNEL Plots rows or columns of the data given the electrode
+%PLOTALLCHANNELS Plots all rows or columns of the data given the electrode
 %configuration. The data should be normalised.
 %
 %   Input:

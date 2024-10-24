@@ -1,6 +1,9 @@
 # Ignore data folders
 data/
 
+# Ignore figures
+figures/
+
 # Ignore README backups
 *.backup
 

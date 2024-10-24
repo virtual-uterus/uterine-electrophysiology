@@ -1,4 +1,4 @@
-function [event_interval_mean, event_interval_std, nb_samples] = ...
+function [event_interval, nb_samples] = ...
     eventIntervalAnalysis(past_event, cur_event)
 %EVENTINTERVALANALYSIS Computes the mean interval and standard deviation of
 %two events based on their timestamps.
@@ -8,9 +8,7 @@ function [event_interval_mean, event_interval_std, nb_samples] = ...
 %    - cur_event, timestamps and channel numbers of the following event.
 %
 %   Return:
-%    - event_interval_mean, mean interval between the two events (s).
-%    - event_interval_mean, standard deviation of interval between the two
-%    events (s).
+%    - event_interval, interval between the two events (s).
 %   - nb_samples, number of common channels for calculating average std
 %   later.
 nb_common_chns = intersect(past_event(:, 2), cur_event(:, 2))';
@@ -24,7 +22,4 @@ for j = 1:length(nb_common_chns)
     event_interval(j) = abs( ...
         past_event(past_idx, 1) - cur_event(cur_idx, 1));
 end
-
-event_interval_mean = mean(event_interval);
-event_interval_std = std(event_interval);
 end
