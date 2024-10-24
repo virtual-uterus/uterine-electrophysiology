@@ -30,9 +30,11 @@ prop_dist = abs(electrode_dist * (max_ind - min_ind));
 nan_chns = find(isnan(arranged_times));
 Vy(nan_chns) = nan;
 prop_vel(nan_chns) = nan;
+Vy_mean = mean(Vy, 'omitnan');
+Vy_mean(isnan(Vy_mean)) = [];  % In case a column has no marks
 
-if not(xor(any(mean(Vy, 'omitnan') > 0), all(mean(Vy, 'omitnan') > 0)))
-    prop_direction = sign(mean(Vy(:, 1), 'omitnan'));
+if not(xor(any(Vy_mean > 0), all(Vy_mean > 0)))
+    prop_direction = sign(Vy_mean(1));
 else
     prop_direction = 0;
 end
