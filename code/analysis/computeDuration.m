@@ -1,5 +1,5 @@
 function [event_duration, start_times, end_times] = ...
-    computeDuration(signal, Fs, win_split, sample_percent, type)
+    computeDuration(signal, Fs, win_split, type)
 %COMPUTEDURATION Computes the duration of the event in each channel.
 %This method uses a thresholding technique based on the average value of
 %the absolute signal. The type is used to run the burst detection
@@ -10,8 +10,6 @@ function [event_duration, start_times, end_times] = ...
 %    - Fs, sampling frequency.
 %    - win_split, percentage of the window before the event timestamp used
 %    to find the peak closest to the mark.
-%    - sample_percent, percentage of NB_SAMPLES to use for window in the
-%    error correction and the number of RMS samples for the envelope.
 %    - type, str {'burst', 'swave'}, type of signal to process, default
 %    value is swave.
 
@@ -22,12 +20,13 @@ function [event_duration, start_times, end_times] = ...
 %       start_times(1 x CHANNELS).
 %    - end_times, end time of the event in seconds in each channel,
 %       end_times(1 x CHANNELS).
-if nargin < 5
+if nargin < 4
     type = 'swave';
 end
 
 [nb_samples, nb_chns] = size(signal);
 chns = 1:nb_chns; % Channel list to iterate through
+sample_percent = 0.12; 
 
 % Placeholders for outputs
 start_times = nan(1, nb_chns);
