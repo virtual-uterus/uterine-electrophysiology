@@ -1,9 +1,7 @@
 function [event_duration, start_times, end_times] = ...
     computeDuration(signal, Fs, win_split, type)
 %COMPUTEDURATION Computes the duration of the event in each channel.
-%This method uses a thresholding technique based on the average value of
-%the absolute signal. The type is used to run the burst detection
-%algorithm.
+%The type is used to run the burst detection algorithm.
 %
 %   Input:
 %    - signal, signals to analyse, signal(NB_SAMPLES x CHANNELS).
