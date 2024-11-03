@@ -104,10 +104,10 @@ get_label <- function(metric) {
   # Define y-axis labels based on the metric
   label <- switch(metric,
     "sw_duration" = "Slow-wave duration (s)",
-    "fw_duration" = "Fast-wave duration (s)",
-    "fw_delay" = "Fast-wave delay (s)",
+    "fw_duration" = "Burst duration (s)",
+    "fw_delay" = "Burst delay (s)",
     "event_interval" = "Event interval (s)",
-    "fw_presence" = "Fast-wave presence (%)",
+    "fw_presence" = "Burst presence (%)",
     "prop_vel" = "Propagation velocity (mm/s)",
     "Unknown Metric" # Fallback for metrics not listed
   )
