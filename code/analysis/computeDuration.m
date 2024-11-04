@@ -24,7 +24,7 @@ end
 
 [nb_samples, nb_chns] = size(signal);
 chns = 1:nb_chns; % Channel list to iterate through
-sample_percent = 0.12; 
+sample_percent = 0.10; 
 
 % Placeholders for outputs
 start_times = nan(1, nb_chns);
@@ -39,12 +39,12 @@ for j = chns
         trend = trend ./ max(trend);
 
         % If looking at bursts isolate signals with bursts using variance
-        if var(trend) <= 0.03
+        if var(trend) <= 0.02
             continue
         end
 
         % Find peaks and ensure the indices are in a valid range
-        [~, peak_loc] = findpeaks(trend);
+        [~, peak_loc] = findpeaks(trend, "MinPeakProminence", std(trend));
 
         if ~isempty(peak_loc)
             % If peaks have been found estimate duration
