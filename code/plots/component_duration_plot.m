@@ -46,24 +46,37 @@ end
     Fs);
 
 % Normalise data
+norm_data = data(start_val:end_val, chn_nb) ./ max( ...
+    abs(data(start_val:end_val, chn_nb)));
 norm_fwave = fwave(start_val:end_val, chn_nb) ./ max( ...
     abs(fwave(start_val:end_val, chn_nb)));
 norm_swave = swave(start_val:end_val, chn_nb) ./ max( ...
     abs(swave(start_val:end_val, chn_nb)));
 
-components = ["low_frequency_event", "high_frequency_event"];
-all_data = [norm_swave norm_fwave];
+components = ["event", "low_frequency_event", "high_frequency_event"];
+all_data = [norm_data, norm_swave norm_fwave];
+timestamp_val = 236;
 
 %% Plot single event components
-for k = 1:2
+for k = 1:3
     figure; % Create a new figure    
     y_axis = all_data(:, k);
 
+    % Plots
     plot(tvec(start_val:end_val), y_axis, 'k', 'LineWidth', 1.5);
+    hold on;
+    plot(timestamp_val, y_axis(timestamp_val*Fs-start_val+1), ...
+        'r*', "MarkerSize", 10);
+
+    % Labels
     ylabel("Normalised amplitude");
     xlabel("Time (s)");
 
+    % Ticks and limits
     set(gca, 'XTickLabel', 0:5:40); % Set x-axis labels
+    ylim([-1.1, 1.1])
+
+    legend("Signal", "Manual mark", 'Location','southwest')
 
     % Save figure and close it
     fig = gcf;
@@ -76,44 +89,62 @@ components = ["low_frequency_trend", "high_frequency_trend"];
 
 %% Plot single event slow-wave trend
     figure; % Create a new figure    
-    y_axis = all_data(:, 1);
+    y_axis = all_data(:, 2);
     trend = trenddecomp(y_axis, 'ssa', ...
         round(length(y_axis)*sample_percent));
     trend = trend ./ max(abs(trend));
 
+    % Plots
     plot(tvec(start_val:end_val), trend, 'k', 'LineWidth', 1.5);
+    hold on;
+    plot(timestamp_val, y_axis(timestamp_val*Fs-start_val+1), ...
+        'r*', "MarkerSize", 10);
+
+    % Labels
     ylabel("Normalised amplitude");
     xlabel("Time (s)");
 
+    % Ticks and limits
     set(gca, 'XTickLabel', 0:5:40); % Set x-axis labels
+    ylim([-1.1, 1.1])
+
+    legend("Signal", "Manual mark", 'Location','southwest')
 
     % Save figure and close it
     fig = gcf;
-    exportgraphics(fig, strcat(save_directory, '/', components(k), ...
+    exportgraphics(fig, strcat(save_directory, '/', components(1), ...
         ".png"), 'Resolution',300)
     close all;
 
 %% Plot single event burst composition
     figure; % Create a new figure    
-    y_axis = all_data(:, 2);
+    y_axis = all_data(:, 3);
     trend = trenddecomp(abs(y_axis), 'ssa', ...
         round(length(y_axis)*sample_percent));
     trend = trend ./ max(abs(trend));
     bin_trend = imbinarize(trend); 
 
+    % Plots
     plot(tvec(start_val:end_val), y_axis, 'k', 'LineWidth', 1.5);
     hold on;
     plot(tvec(start_val:end_val), trend, 'r', 'LineWidth', 1.5);
     plot(tvec(start_val:end_val), bin_trend, 'b', 'LineWidth', 1.5)
+    plot(timestamp_val, y_axis(timestamp_val*Fs-start_val+1), ...
+        'r*', "MarkerSize", 10);
+
+    % Labels
     ylabel("Normalised amplitude");
     xlabel("Time (s)");
 
+    % Ticks and limits
     set(gca, 'XTickLabel', 0:5:40); % Set x-axis labels
-
-    legend("Burst", "Burst trend", "Thresholded trend", ...
+    ylim([-1.1, 1.1])
+    
+    legend("Burst", "Burst trend", "Thresholded trend", "Manual mark", ...
         "Location", "southwest")
+
     % Save figure and close it
     fig = gcf;
-    exportgraphics(fig, strcat(save_directory, '/', components(k), ...
+    exportgraphics(fig, strcat(save_directory, '/', components(2), ...
         ".png"), 'Resolution',300)
     close all;
