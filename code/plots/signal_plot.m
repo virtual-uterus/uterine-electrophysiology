@@ -40,9 +40,9 @@ end
     Fs);
 
 % Normalise data
-norm_data = data ./ max(data);
-norm_fwave = fwave ./ max(fwave);
-norm_swave = swave ./ max(swave);
+norm_data = data ./ max(abs(data));
+norm_fwave = fwave ./ max(abs(fwave));
+norm_swave = swave ./ max(abs(swave));
 
 components = ["raw_signal", "high_frequency", "low_frequency"];
 all_data = cat(3, norm_data, norm_fwave, norm_swave);
