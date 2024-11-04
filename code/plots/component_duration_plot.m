@@ -32,7 +32,7 @@ electrode_cnfg = toapp.orientedElec;
 start_val = 215*Fs;
 end_val = 255*Fs;
 chn_nb = 52;
-sample_percent = 0.08; 
+sample_percent = 0.12; 
 
 if min(electrode_cnfg, [], "all") == 65
     % Reset electrode numbers if using C and D channels

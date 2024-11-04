@@ -24,7 +24,7 @@ end
 
 [nb_samples, nb_chns] = size(signal);
 chns = 1:nb_chns; % Channel list to iterate through
-sample_percent = 0.08; 
+sample_percent = 0.12; 
 
 % Placeholders for outputs
 start_times = nan(1, nb_chns);
