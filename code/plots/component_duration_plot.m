@@ -32,7 +32,7 @@ electrode_cnfg = toapp.orientedElec;
 start_val = 215*Fs;
 end_val = 255*Fs;
 chn_nb = 52;
-sample_percent = 0.12; 
+sample_percent = 0.10; 
 
 if min(electrode_cnfg, [], "all") == 65
     % Reset electrode numbers if using C and D channels
@@ -125,11 +125,11 @@ components = ["low_frequency_trend", "high_frequency_trend"];
     bin_trend = imbinarize(trend); 
 
     % Plots
-    plot(tvec(start_val:end_val), y_axis, 'k', 'LineWidth', 1.5);
+    plot(tvec(start_val:end_val), abs(y_axis), 'k', 'LineWidth', 1.5);
     hold on;
     plot(tvec(start_val:end_val), trend, 'r', 'LineWidth', 1.5);
     plot(tvec(start_val:end_val), bin_trend, 'b', 'LineWidth', 1.5)
-    plot(timestamp_val, y_axis(timestamp_val*Fs-start_val+1), ...
+    plot(timestamp_val, abs(y_axis(timestamp_val*Fs-start_val+1)), ...
         'r*', "MarkerSize", 10);
 
     % Labels
