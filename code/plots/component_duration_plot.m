@@ -64,9 +64,6 @@ for k = 1:3
 
     % Plots
     plot(tvec(start_val:end_val), y_axis, 'k', 'LineWidth', 1.5);
-    hold on;
-    plot(timestamp_val, y_axis(timestamp_val*Fs-start_val+1), ...
-        'r*', "MarkerSize", 10);
 
     % Labels
     ylabel("Normalised amplitude");
@@ -75,8 +72,6 @@ for k = 1:3
     % Ticks and limits
     set(gca, 'XTickLabel', 0:5:40); % Set x-axis labels
     ylim([-1.1, 1.1])
-
-    legend("Signal", "Manual mark", 'Location','southwest')
 
     % Save figure and close it
     fig = gcf;
@@ -96,9 +91,6 @@ components = ["low_frequency_trend", "high_frequency_trend"];
 
     % Plots
     plot(tvec(start_val:end_val), trend, 'k', 'LineWidth', 1.5);
-    hold on;
-    plot(timestamp_val, y_axis(timestamp_val*Fs-start_val+1), ...
-        'r*', "MarkerSize", 10);
 
     % Labels
     ylabel("Normalised amplitude");
@@ -107,8 +99,6 @@ components = ["low_frequency_trend", "high_frequency_trend"];
     % Ticks and limits
     set(gca, 'XTickLabel', 0:5:40); % Set x-axis labels
     ylim([-1.1, 1.1])
-
-    legend("Signal", "Manual mark", 'Location','southwest')
 
     % Save figure and close it
     fig = gcf;
@@ -129,8 +119,6 @@ components = ["low_frequency_trend", "high_frequency_trend"];
     hold on;
     plot(tvec(start_val:end_val), trend, 'r', 'LineWidth', 1.5);
     plot(tvec(start_val:end_val), bin_trend, 'b', 'LineWidth', 1.5)
-    plot(timestamp_val, abs(y_axis(timestamp_val*Fs-start_val+1)), ...
-        'r*', "MarkerSize", 10);
 
     % Labels
     ylabel("Normalised amplitude");
@@ -140,7 +128,7 @@ components = ["low_frequency_trend", "high_frequency_trend"];
     set(gca, 'XTickLabel', 0:5:40); % Set x-axis labels
     ylim([-1.1, 1.1])
     
-    legend("Burst", "Burst trend", "Thresholded trend", "Manual mark", ...
+    legend("Burst", "Burst trend", "Thresholded trend", ...
         "Location", "southwest")
 
     % Save figure and close it
