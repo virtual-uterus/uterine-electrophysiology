@@ -4,6 +4,7 @@
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(ggsignif))
+suppressPackageStartupMessages(library(ggpattern))
 suppressPackageStartupMessages(library(emmeans))
 
 # Function to plot the statistical analysis results
@@ -17,15 +18,14 @@ plot_anova_results <- function(data, model, metric) {
   # Adjust y_min to 15 if metric is "sw_duration" or "fw_duration"
   if (metric %in% c("fw_presence")) {
     y_min <- 0
-  }
-  else if (metric %in% c("sw_duration", "fw_duration")) {
+  } else if (metric %in% c("sw_duration", "fw_duration")) {
     y_min <- 5
     y_max <- 25
   }
 
   # Calculate the means for each experiment within each phase
   data_means <- data %>%
-    group_by(Phase, Experiment, Transition) %>% 
+    group_by(Phase, Experiment, Transition) %>%
     summarise(Mean = mean(Value, na.rm = TRUE), .groups = "drop")
 
   # Plot
@@ -71,14 +71,14 @@ plot_anova_results <- function(data, model, metric) {
   comparisons <- significant_comparisons %>%
     mutate(contrast = strsplit(as.character(contrast), " - ")) %>%
     pull(contrast)
-  
+
   if (nrow(significant_comparisons) > 0) {
     # Define y-offsets for significance bars to prevent overlap, scaled based on the number of comparisons
-    offset <- y_max * 0.015 * (nrow(significant_comparisons))  # Adjust offset based on the number of bars
-    
+    offset <- y_max * 0.015 * (nrow(significant_comparisons)) # Adjust offset based on the number of bars
+
     # Generate y_positions for each comparison
     bar_positions <- y_max + seq_len(nrow(significant_comparisons)) * offset
-    
+
     # Plot with adjusted significance bars
     p <- p + geom_signif(
       comparisons = comparisons,
@@ -98,8 +98,21 @@ plot_anova_results <- function(data, model, metric) {
 
 # Function to plot the propagation direction data
 plot_prop_direction <- function(data) {
-  p <- ggplot(data, aes(x = Phase, y = Data, fill = Direction)) +
-    geom_bar(stat = "identity", position = "stack") +
+  p <- ggplot(data, aes(
+    x = Phase,
+    y = Data,
+    fill = Phase,
+    pattern = Direction
+  )) +
+    geom_bar_pattern(
+      stat = "identity", position = "stack",
+      pattern_angle = 45,
+      color = "black", # Add black contour to the bars
+      pattern_fill = "black",
+      pattern_density = 0.1,
+      pattern_spacing = 0.025,
+      pattern_key_scale_factor = 0.8
+    ) +
     labs(
       x = "Estrus phase",
       y = "Propagation directions (%)"
@@ -108,6 +121,16 @@ plot_prop_direction <- function(data) {
       toupper(substr(x, 1, 1))
     }) + # Use only the first letter and capitalise it
     scale_fill_brewer(palette = "Accent") +
+    scale_pattern_manual(values = c("none", "circle", "stripe")) +
     theme_classic(base_size = 21) +
-    theme(legend.title = element_blank()) # Remove the legend title
+    theme(
+      legend.title = element_blank(), # Remove the legend title
+      legend.key = element_rect(fill = "white", color = "black"),
+    ) +
+    guides(
+      fill = "none", # Remove the fill legend (Phase)
+      pattern = guide_legend(
+        title = "Direction"
+      )
+    )
 }
