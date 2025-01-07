@@ -13,13 +13,10 @@ plot_anova_results <- function(data, model, metric) {
 
   # Compute maximum y-values for each comparison to avoid overlap
   y_max <- max(data$Value, na.rm = TRUE)
-  y_min <- min(data$Value, na.rm = TRUE)
+  y_min <- 0
 
-  # Adjust y_min to 15 if metric is "sw_duration" or "fw_duration"
-  if (metric %in% c("fw_presence")) {
-    y_min <- 0
-  } else if (metric %in% c("sw_duration", "fw_duration")) {
-    y_min <- 5
+  # If metric is "sw_duration" or "fw_duration"
+  if (metric %in% c("sw_duration", "fw_duration")) {
     y_max <- 25
   }
 
