@@ -28,18 +28,40 @@ plot_anova_results <- function(data, model, metric) {
     group_by(Phase, Experiment, Transition) %>%
     summarise(Mean = mean(Value, na.rm = TRUE), .groups = "drop")
 
+  # Calculate the means and standard deviations for each phase
+  data_summary <- data %>%
+    group_by(Phase) %>%
+    summarise(
+      Mean = mean(Value, na.rm = TRUE),
+      STD = sd(Value, na.rm = TRUE),
+      Value = first(Value),
+      .groups = "drop"
+    )
+
   # Plot
   p <- ggplot(data, aes(x = Phase, y = Value)) +
-    geom_boxplot(aes(fill = Phase),
-      show.legend = FALSE
-    ) +
     geom_jitter(
       data = data_means,
-      aes(x = Phase, y = Mean, color = factor(Transition)),
+      aes(x = Phase, y = Mean),
+      color = "black",
       size = 3,
       shape = 16,
       show.legend = FALSE,
       width = 0.1
+    ) +
+    geom_point(
+      data = data_summary,
+      aes(x = Phase, y = Mean, color = factor(Phase)),
+      size = 4,
+      shape = 16,
+      show.legend = FALSE
+    ) +
+    geom_errorbar(
+      data = data_summary, # Use data_summary for error bars
+      aes(x = Phase, ymin = Mean - STD, ymax = Mean + STD, color = Phase),
+      linewidth = 1,
+      width = 0.2,
+      show.legend = FALSE
     ) +
     theme_classic(base_size = 21) +
     scale_x_discrete(labels = function(x) {
@@ -49,7 +71,7 @@ plot_anova_results <- function(data, model, metric) {
       x = "Estrus phase",
       y = get_label(metric)
     ) +
-    scale_fill_brewer(palette = "Accent") +
+    scale_colour_brewer(palette = "Set1") +
     coord_cartesian(ylim = c(y_min, NA))
 
   # Extract pairwise comparisons from the model
@@ -73,7 +95,6 @@ plot_anova_results <- function(data, model, metric) {
     pull(contrast)
 
   if (nrow(significant_comparisons) > 0) {
-    # Define y-offsets for significance bars to prevent overlap, scaled based on the number of comparisons
     offset <- y_max * 0.015 * (nrow(significant_comparisons)) # Adjust offset based on the number of bars
 
     # Generate y_positions for each comparison
@@ -102,7 +123,8 @@ plot_prop_direction <- function(data) {
     x = Phase,
     y = Data,
     fill = Phase,
-    pattern = Direction
+    pattern = Direction,
+    alpha = 0.9,
   )) +
     geom_bar_pattern(
       stat = "identity", position = "stack",
@@ -111,7 +133,7 @@ plot_prop_direction <- function(data) {
       pattern_fill = "black",
       pattern_density = 0.1,
       pattern_spacing = 0.025,
-      pattern_key_scale_factor = 0.8
+      pattern_key_scale_factor = 0.8,
     ) +
     labs(
       x = "Estrus phase",
@@ -120,7 +142,7 @@ plot_prop_direction <- function(data) {
     scale_x_discrete(labels = function(x) {
       toupper(substr(x, 1, 1))
     }) + # Use only the first letter and capitalise it
-    scale_fill_brewer(palette = "Accent") +
+    scale_fill_brewer(palette = "Set1") +
     scale_pattern_manual(values = c("none", "circle", "stripe")) +
     theme_classic(base_size = 21) +
     theme(
@@ -129,6 +151,7 @@ plot_prop_direction <- function(data) {
     ) +
     guides(
       fill = "none", # Remove the fill legend (Phase)
+      alpha = "none",
       pattern = guide_legend(
         title = "Direction"
       )
