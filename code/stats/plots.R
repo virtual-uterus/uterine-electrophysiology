@@ -30,7 +30,7 @@ plot_anova_results <- function(data, model, metric) {
     group_by(Phase) %>%
     summarise(
       Mean = mean(Value, na.rm = TRUE),
-      STD = sd(Value, na.rm = TRUE),
+      STD = sd(Value, na.rm = TRUE) / sqrt(n()),
       Value = first(Value),
       .groups = "drop"
     )
