@@ -63,7 +63,7 @@ for k = 1:3
     for j = linspace(1, 16, 6)
         plot(tvec(start_val:end_val), ...
             y_axis(start_val:end_val, j) + (cpt)*4.0, ...
-            'k', 'LineWidth', 1.5);
+            'k', 'LineWidth', 2.5);
         hold on;
         cpt = cpt + 1;
     end
