@@ -154,7 +154,7 @@ for j = 1:nb_events
 %             frequencyAnalysis(swave, Fs);
 
         [sw_duration, fw_duration, fw_delay] = temporalAnalysis(...
-            swave, fwave, Fs, params.win_split, params.env_tolerance);
+            swave, fwave, Fs, params.win_split);
 
         % Populate AS with temporal metric
         export_cells{k, 4} = sw_duration;

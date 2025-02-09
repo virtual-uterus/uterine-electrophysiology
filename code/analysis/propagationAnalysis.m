@@ -33,7 +33,10 @@ prop_vel(nan_chns) = nan;
 Vy_mean = mean(Vy, 'omitnan');
 Vy_mean(isnan(Vy_mean)) = [];  % In case a column has no marks
 
-if not(xor(any(Vy_mean > 0), all(Vy_mean > 0)))
+Vy_mean_signs = sign(Vy_mean);
+if any(sum(Vy(:, Vy_mean_signs > 0) < 0) > 5) || any(sum(Vy(:, Vy_mean_signs < 0) > 0) > 5)
+    prop_direction = 0;
+elseif not(xor(any(Vy_mean > 0), all(Vy_mean > 0)))
     prop_direction = sign(Vy_mean(1));
 else
     prop_direction = 0;

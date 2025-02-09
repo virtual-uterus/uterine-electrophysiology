@@ -40,9 +40,9 @@ end
     Fs);
 
 % Normalise data
-norm_data = data ./ max(data);
-norm_fwave = fwave ./ max(fwave);
-norm_swave = swave ./ max(swave);
+norm_data = data ./ max(abs(data));
+norm_fwave = fwave ./ max(abs(fwave));
+norm_swave = swave ./ max(abs(swave));
 
 components = ["raw_signal", "high_frequency", "low_frequency"];
 all_data = cat(3, norm_data, norm_fwave, norm_swave);
@@ -58,19 +58,22 @@ for k = 1:3
     start_val = 100*Fs;
     end_val = 400*Fs;
 
-    for j = 5:10
+    cpt = 4;  % For plot on different levels
+
+    for j = linspace(1, 16, 6)
         plot(tvec(start_val:end_val), ...
-            y_axis(start_val:end_val, j) + (j-1)*4.0, ...
-            'k', 'LineWidth', 1.5);
+            y_axis(start_val:end_val, j) + (cpt)*4.0, ...
+            'k', 'LineWidth', 2.5);
         hold on;
+        cpt = cpt + 1;
     end
 
     set(gca, 'YTick', 16:4:36); % Reset y-axis ticks
-    set(gca, 'YTickLabel', 1:6); % Set y-axis labels
+    set(gca, 'YTickLabel', flip(1:6)); % Set y-axis labels
     set(gca, 'XTickLabel', 0:50:300); % Set x-axis labels
     ylim([12 39]);
 
-    ylabel("Electrical signals");
+    ylabel("Electrode number");
     xlabel("Time (s)");
 
     % Save figure and close it
