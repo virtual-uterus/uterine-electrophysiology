@@ -5,7 +5,7 @@ metrics=("prop_vel" "sw_duration" "fw_duration" "event_interval" "fw_presence" "
 
 # Loop over each metric and call Rscript
 for metric in "${metrics[@]}"; do
-    Rscript statistical-analysis.R electrophys/data/exports "$metric"
+    Rscript statistical-analysis.R uterine-electrophysiology/data/exports "$metric"
 done
 
-Rscript direction-analysis.R electrophys/data/exports
+Rscript direction-analysis.R uterine-electrophysiology/data/exports

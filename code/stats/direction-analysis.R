@@ -19,7 +19,7 @@ parser$add_argument("dir",
   help = "path to data directory from base directory"
 )
 parser$add_argument("--save-dir",
-  type = "character", default = "electrophys/figures/stats",
+  type = "character", default = "uterine-electrophysiology/figures/stats",
   help = "path to save directory"
 )
 

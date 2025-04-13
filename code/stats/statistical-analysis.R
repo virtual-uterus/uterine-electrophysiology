@@ -22,7 +22,7 @@ parser$add_argument("dir",
 )
 parser$add_argument("metric", type = "character", help = "metric to analyse")
 parser$add_argument("--save-dir",
-  type = "character", default = "electrophys/figures/stats",
+  type = "character", default = "uterine-electrophysiology/figures/stats",
   help = "path to save directory"
 )
 
